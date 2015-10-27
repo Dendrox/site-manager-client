@@ -1,0 +1,44 @@
+<div class="form-container">
+	<form class="add_steel">
+		<label for="">Type</label>
+		<select id="sd" class="steel_type selectmenu">
+			{{#if type}}
+				<option value="{{typeId}}" selected >{{type}}</option>
+			{{/if}}
+			{{#each types}}
+				<option>{{this}}</option>
+			{{/each}}
+			
+		</select>
+
+		<label for="">Section</label>
+		<select class="steel_section">
+			{{#if section}}
+				<option selected >{{section}}</option>
+			{{/if}}
+			{{#each sections}}
+				<option>{{this}}</option>
+			{{/each}}
+		</select>
+
+		<label for="">Grade</label>
+		<select class="steel_grade">
+			{{#if grade}}
+				<option selected >{{grade}} </option>
+			{{/if}}
+			{{#each grades}}
+				<option>{{this}}</option>
+			{{/each}}
+		</select>
+
+		<label for="length">Length</label>
+		<input {{#if length}}value={{length}}{{/if}} id="length" name="length" type="number">
+
+		<label for="length">Quantity</label>
+		<input {{#if quantity}}value={{quantity}}{{/if}} id="quantity" name="quantity" type="number">
+
+		<label for="commments">Comments</label>
+		<textarea id="comments" name="comments" type="text">{{comments}}</textarea>
+		<input id="submit-form" type="button" value="submit"/>
+	</form>
+</div>
