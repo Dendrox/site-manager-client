@@ -12,7 +12,7 @@ Model = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		return 'https://localhost/api/authenticate'
+		return 'https://intense-thicket-2598.herokuapp.com/api/authenticate'
 	}
 });
 
