@@ -10,7 +10,7 @@ Collection = Backbone.Collection.extend({
 	},
 	model : Model,
 	url : function(){
-		return 'http://localhost:8080/api/steel_types?token=' + window.sessionStorage.token
+		return 'https://intense-thicket-2598.herokuapp.com/api/steel_types?token=' + window.sessionStorage.token
 	}
 
 });

@@ -23,17 +23,17 @@ Model = Backbone.Model.extend({
 	},
 	urlRoot : function(){
 		// 'http://localhost:8080/api/add-steel'
-		var url = 'http://localhost:8080/api/'+this.get('extension');
+		var url = 'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension');
 		return url;
 	},
 	sync : function(method, model, options){
 		console.log('sync method: ', method, 'model: ', model, 'options: ', options);
 		if(method==='read' || method==='delete' || method==='update'){
 			console.log('reading')
-		   options.url =  'http://localhost:8080/api/'+this.get('extension') + '/' + this.id + '?token=' + window.sessionStorage.token; 
+		   options.url =  'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension') + '/' + this.id + '?token=' + window.sessionStorage.token; 
 		}
 		else if(method==='create'){
-			options.url =  'http://localhost:8080/api/'+this.get('extension') + '?token=' + window.sessionStorage.token; 
+			options.url =  'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension') + '?token=' + window.sessionStorage.token; 
 		}
 
 		return Backbone.sync(method, model, options);

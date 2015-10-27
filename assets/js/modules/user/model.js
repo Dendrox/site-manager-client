@@ -26,7 +26,7 @@ Model = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		return 'http://localhost:8080/api/user/logged-in?token='+window.sessionStorage.token;
+		return 'https://intense-thicket-2598.herokuapp.com/api/user/logged-in?token='+window.sessionStorage.token;
 	}
 });
 
