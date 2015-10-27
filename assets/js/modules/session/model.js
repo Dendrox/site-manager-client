@@ -13,7 +13,6 @@ Model = Backbone.Model.extend({
 	},
 	urlRoot : function(){
 		return 'https://intense-thicket-2598.herokuapp.com/api/authenticate'
-		//add token to URL: ?token=' + window.App.data.token
 	}
 });
 
