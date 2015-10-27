@@ -528,8 +528,7 @@ Model = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		return 'https://git.heroku.com/intense-thicket-2598.git/api/authenticate'
-		//add token to URL: ?token=' + window.App.data.token
+		return 'https://intense-thicket-2598.herokuapp.com/api/authenticate' // comment
 	}
 });
 
