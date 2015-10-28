@@ -9,8 +9,8 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
-App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';
-//''http://localhost:8080/api';
+App.apiURL = 'http://localhost:8080/api';
+//'https://intense-thicket-2598.herokuapp.com/api';
 
 
 // NOTE: This needs to be moved maybe to a boot module
@@ -30,7 +30,8 @@ App.instance = new Application.Model();
 App.addRegions({
 	mainRegion : '#main-region',
 	headerRegion : '#header-region',
-	filterRegion : '#filter-region'
+	filterRegion : '#filter-region',
+	loadingRegion : '#loading-region'
 });
 
 
@@ -48,6 +49,17 @@ App.on('start', function() {
 	App.router = new AppRouter();
 	App.router.steel = new SteelRouter();
 	App.router.user = new UserRouter();
+
+	$.ajaxSetup({
+	    beforeSend:function(){
+	        // show gif here, eg:
+	        $("#loading").show();
+	    },
+	    complete:function(){
+	        // hide gif here, eg:
+	        $("#loading").hide()
+	    }
+	});
 
 	Backbone.history.start();
 });
