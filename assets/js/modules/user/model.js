@@ -21,12 +21,29 @@ Model = Backbone.Model.extend({
 	// 	this.get('incoming').fetch();
 	// 	this.get('outgoing').fetch();
 	// },
+	loggedIn : function(){
+	   this.fetch()
+	},
 	parse : function(response){
 		response.id = response._id;
 		return response;
 	},
+	logout : function(){
+		this.clear();
+		this.set(this.defaults);
+
+		var properties = [
+			'incoming',
+			'outgoing'
+		];
+
+		var self = this;
+		_.each(properties, function(property){
+			self.defaults[property].reset();
+		});
+	},
 	urlRoot : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/user/logged-in?token='+window.sessionStorage.token;
+		return window.App.apiURL + '/user/logged-in?token='+window.sessionStorage.token;
 	}
 });
 

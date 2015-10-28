@@ -26,11 +26,10 @@ Order = Marionette.ItemView.extend({
 		})
 	},
 	confirmOrder : function(){
-		var user = window.App.instance.get('user');
 		var options = this.model.toJSON();
 		options.extension = 'steel_log';
 		options.date_ordered = moment().toDate();
-		options.ordered_by = user.username;
+		options.ordered_by = window.App.instance.get('user').get('username');
 
 		delete options.id
 		

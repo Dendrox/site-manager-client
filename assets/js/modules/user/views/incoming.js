@@ -10,9 +10,6 @@ var Item = Marionette.ItemView.extend({
 	template : Template,
 	initialize : function(){
 		
-	},
-	onShow : function(){
-		console.log(this.model.get('item'))
 	}
 });
 
@@ -20,7 +17,10 @@ List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : Item,
 	initialize : function(){
-		this.collection = window.App.instance.get('user').get('incoming')
+		
+		this.collection.fetch({
+			data : $.param({ordered_by : window.App.instance.get('user').get('username')})
+		});
 	}
 });
 

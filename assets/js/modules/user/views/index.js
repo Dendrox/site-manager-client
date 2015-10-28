@@ -40,8 +40,7 @@ Index = Marionette.ItemView.extend({
 	},
 	logout: function(){
 		window.sessionStorage.removeItem('token');
-		var self = this;
-		window.App.instance.get('user').clear().set(window.App.instance.get('user').defaults);
+		window.App.instance.get('user').logout();
 		this.destroy();
 		Backbone.history.navigate('login', {trigger : true});
 	}

@@ -6,7 +6,7 @@ var $        = require('jquery'),
 Collection = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/steel_items/posts?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_items/posts?token=' + window.sessionStorage.token
 	}
 });
 

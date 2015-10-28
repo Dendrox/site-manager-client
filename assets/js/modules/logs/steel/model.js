@@ -15,7 +15,7 @@ Item = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		var url = 'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension') + '?token='+window.sessionStorage.token;
+		var url = window.App.apiURL + '/'+this.get('extension') + '?token='+window.sessionStorage.token;
 		return url;
 	}
 });

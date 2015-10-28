@@ -12,11 +12,13 @@ var Controller = Marionette.Controller.extend({
         this.renderView(view) 
     },
     viewIncoming : function(){
-        var view = new Module.Views.Incoming();
+        var collection = window.App.instance.get('user').get('incoming');
+        var view = new Module.Views.Incoming({collection : collection});
         this.renderView(view);
     },
     viewOutgoing : function(){
-        var view = new Module.Views.Outgoing();
+        var collection = window.App.instance.get('user').get('outgoing');
+        var view = new Module.Views.Outgoing({collection : collection});
         this.renderView(view);
     },
     renderView: function(view) {

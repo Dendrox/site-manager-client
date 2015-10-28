@@ -18,7 +18,8 @@ var Controller = Marionette.Controller.extend({
     },
     navHome : function(){
     	console.log('navHome');
-    	var view = new Module.Views.Index();
+        var app_model = window.App.instance;
+    	var view = new Module.Views.Index({model: app_model});
         var header = new HeaderView({model : window.App.instance.get('user')});
         this.showHeader(header);
     	this.renderView(view);

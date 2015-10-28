@@ -1,13 +1,6 @@
 var $ = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-	Controller = require('./controller'),
-	ExtendRouter = require('./views/router_extend'),
-	Application = require('./modules/application/module'),
-	AppRouter   = require('./modules/application/router'),
-	SteelRouter = require('./modules/steel/router'),
-	UserRouter  = require('./modules/user/router'),
-	User = require('./models/user');
+	Backbone = require('backbone');
 
 Backbone.$ = $;
 
@@ -15,7 +8,22 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
+App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';
+//''http://localhost:8080/api';
+
+
+// NOTE: This needs to be moved maybe to a boot module
+var Controller   = require('./controller'),
+	ExtendRouter = require('./views/router_extend'),
+	Application  = require('./modules/application/module'),
+	AppRouter    = require('./modules/application/router'),
+	SteelRouter  = require('./modules/steel/router'),
+	UserRouter   = require('./modules/user/router'),
+	User         = require('./models/user');
+
 App.instance = new Application.Model();
+
+
 
 // Add Viewing Regions
 App.addRegions({

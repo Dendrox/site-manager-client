@@ -37,7 +37,10 @@ List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : Item,
 	initialize : function(){
-		this.collection = window.App.instance.get('user').get('outgoing');
+		
+		this.collection.fetch({
+			data : $.param({added_by : window.App.instance.get('user').get('username')})
+		});
 	}
 });
 

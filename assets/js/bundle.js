@@ -1,14 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.App = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var $ = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-	Controller = require('./controller'),
-	ExtendRouter = require('./views/router_extend'),
-	Application = require('./modules/application/module'),
-	AppRouter   = require('./modules/application/router'),
-	SteelRouter = require('./modules/steel/router'),
-	UserRouter  = require('./modules/user/router'),
-	User = require('./models/user');
+	Backbone = require('backbone');
 
 Backbone.$ = $;
 
@@ -16,7 +9,22 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
+App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';
+//''http://localhost:8080/api';
+
+
+// NOTE: This needs to be moved maybe to a boot module
+var Controller   = require('./controller'),
+	ExtendRouter = require('./views/router_extend'),
+	Application  = require('./modules/application/module'),
+	AppRouter    = require('./modules/application/router'),
+	SteelRouter  = require('./modules/steel/router'),
+	UserRouter   = require('./modules/user/router'),
+	User         = require('./models/user');
+
 App.instance = new Application.Model();
+
+
 
 // Add Viewing Regions
 App.addRegions({
@@ -238,7 +246,8 @@ var Controller = Marionette.Controller.extend({
     },
     navHome : function(){
     	console.log('navHome');
-    	var view = new Module.Views.Index();
+        var app_model = window.App.instance;
+    	var view = new Module.Views.Index({model: app_model});
         var header = new HeaderView({model : window.App.instance.get('user')});
         this.showHeader(header);
     	this.renderView(view);
@@ -378,12 +387,14 @@ Index = Marionette.ItemView.extend({
 		'click div#add' : 'addMaterials'
 	},
 	initialize : function(){
-		window.App.instance.get('user').fetch().done(function(response){
-			var user = response;
-			window.App.instance.get('user').get('incoming').fetch({data : $.param({ordered_by : user.username})}).done(function(){
-				window.App.instance.get('user').get('outgoing').fetch({data : $.param({added_by : user.username})});
-			});
-		});
+		// window.App.instance.get('user').fetch().done(function(response){
+		// 	var user = response;
+		// 	window.App.instance.get('user').get('incoming').fetch({data : $.param({ordered_by : user.username})}).done(function(){
+		// 		window.App.instance.get('user').get('outgoing').fetch({data : $.param({added_by : user.username})});
+		// 	});
+		// });
+		if(window.sessionStorage.token)
+			this.model.get('user').loggedIn();
 	},
 	searchMaterials : function(){
 		Backbone.history.navigate('search', {trigger : true})
@@ -448,7 +459,7 @@ var $        = require('jquery'),
 Collection = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/orders?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/orders?token=' + window.sessionStorage.token
 	}
 });
 
@@ -472,7 +483,7 @@ Item = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		var url = 'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension') + '?token='+window.sessionStorage.token;
+		var url = window.App.apiURL + '/'+this.get('extension') + '?token='+window.sessionStorage.token;
 		return url;
 	}
 });
@@ -528,7 +539,7 @@ Model = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/authenticate' // comment
+		return window.App.apiURL + '/authenticate' // comment
 	}
 });
 
@@ -640,7 +651,7 @@ var $        = require('jquery'),
 Collection = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/steel_items?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_items?token=' + window.sessionStorage.token
 		//add token to URL: ?token=' + window.App.data.token
 	}
 });
@@ -721,17 +732,17 @@ Model = Backbone.Model.extend({
 	},
 	urlRoot : function(){
 		// 'http://localhost:8080/api/add-steel'
-		var url = 'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension');
+		var url = window.App.apiURL + '/'+this.get('extension');
 		return url;
 	},
 	sync : function(method, model, options){
 		console.log('sync method: ', method, 'model: ', model, 'options: ', options);
 		if(method==='read' || method==='delete' || method==='update'){
 			console.log('reading')
-		   options.url =  'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension') + '/' + this.id + '?token=' + window.sessionStorage.token; 
+		   options.url =  window.App.apiURL + '/'+this.get('extension') + '/' + this.id + '?token=' + window.sessionStorage.token; 
 		}
 		else if(method==='create'){
-			options.url =  'https://intense-thicket-2598.herokuapp.com/api/'+this.get('extension') + '?token=' + window.sessionStorage.token; 
+			options.url =  window.App.apiURL + '/'+this.get('extension') + '?token=' + window.sessionStorage.token; 
 		}
 
 		return Backbone.sync(method, model, options);
@@ -869,7 +880,6 @@ Add = Marionette.ItemView.extend({
 	},
 	submitForm : function(){
 		var options = {};
-		var user = window.App.instance.get('user');
 		options.extension = ('add-steel')
 		options.type = this.$el.find($('.steel_type option:selected')).text();
 		options.section = this.$el.find($('.steel_section option:selected')).text();
@@ -879,7 +889,7 @@ Add = Marionette.ItemView.extend({
 		options.comments = this.$el.find($('#comments')).val();
 
 		// Steel Log Data
-		options.added_by = user.username;
+		options.added_by = window.App.instance.get('user').get('username');
 		options.date_added = moment().toDate();
 
 		var steel_item = new Model(options);
@@ -1171,11 +1181,10 @@ Order = Marionette.ItemView.extend({
 		})
 	},
 	confirmOrder : function(){
-		var user = window.App.instance.get('user');
 		var options = this.model.toJSON();
 		options.extension = 'steel_log';
 		options.date_ordered = moment().toDate();
-		options.ordered_by = user.username;
+		options.ordered_by = window.App.instance.get('user').get('username');
 
 		delete options.id
 		
@@ -1385,7 +1394,7 @@ Collection = Backbone.Collection.extend({
 	},
 	model : Model,
 	url : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/steel_types?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_types?token=' + window.sessionStorage.token
 	}
 
 });
@@ -1411,7 +1420,7 @@ Model = Backbone.Model.extend({
 		response.id = response._id;
 		return response;
 	},
-	urlRoot : 'https://intense-thicket-2598.herokuapp.com/api/steel_types'
+	urlRoot : window.App.apiURL + '/steel_types'
 });
 
 module.exports = Model;
@@ -1442,7 +1451,7 @@ var $        = require('jquery'),
 Collection = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/steel_items/posts?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_items/posts?token=' + window.sessionStorage.token
 	}
 });
 
@@ -1463,11 +1472,13 @@ var Controller = Marionette.Controller.extend({
         this.renderView(view) 
     },
     viewIncoming : function(){
-        var view = new Module.Views.Incoming();
+        var collection = window.App.instance.get('user').get('incoming');
+        var view = new Module.Views.Incoming({collection : collection});
         this.renderView(view);
     },
     viewOutgoing : function(){
-        var view = new Module.Views.Outgoing();
+        var collection = window.App.instance.get('user').get('outgoing');
+        var view = new Module.Views.Outgoing({collection : collection});
         this.renderView(view);
     },
     renderView: function(view) {
@@ -1507,12 +1518,29 @@ Model = Backbone.Model.extend({
 	// 	this.get('incoming').fetch();
 	// 	this.get('outgoing').fetch();
 	// },
+	loggedIn : function(){
+	   this.fetch()
+	},
 	parse : function(response){
 		response.id = response._id;
 		return response;
 	},
+	logout : function(){
+		this.clear();
+		this.set(this.defaults);
+
+		var properties = [
+			'incoming',
+			'outgoing'
+		];
+
+		var self = this;
+		_.each(properties, function(property){
+			self.defaults[property].reset();
+		});
+	},
 	urlRoot : function(){
-		return 'https://intense-thicket-2598.herokuapp.com/api/user/logged-in?token='+window.sessionStorage.token;
+		return window.App.apiURL + '/user/logged-in?token='+window.sessionStorage.token;
 	}
 });
 
@@ -1591,9 +1619,6 @@ var Item = Marionette.ItemView.extend({
 	template : Template,
 	initialize : function(){
 		
-	},
-	onShow : function(){
-		console.log(this.model.get('item'))
 	}
 });
 
@@ -1601,7 +1626,10 @@ List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : Item,
 	initialize : function(){
-		this.collection = window.App.instance.get('user').get('incoming')
+		
+		this.collection.fetch({
+			data : $.param({ordered_by : window.App.instance.get('user').get('username')})
+		});
 	}
 });
 
@@ -1651,8 +1679,7 @@ Index = Marionette.ItemView.extend({
 	},
 	logout: function(){
 		window.sessionStorage.removeItem('token');
-		var self = this;
-		window.App.instance.get('user').clear().set(window.App.instance.get('user').defaults);
+		window.App.instance.get('user').logout();
 		this.destroy();
 		Backbone.history.navigate('login', {trigger : true});
 	}
@@ -1699,7 +1726,10 @@ List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : Item,
 	initialize : function(){
-		this.collection = window.App.instance.get('user').get('outgoing');
+		
+		this.collection.fetch({
+			data : $.param({added_by : window.App.instance.get('user').get('username')})
+		});
 	}
 });
 

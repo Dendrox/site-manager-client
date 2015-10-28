@@ -62,7 +62,6 @@ Add = Marionette.ItemView.extend({
 	},
 	submitForm : function(){
 		var options = {};
-		var user = window.App.instance.get('user');
 		options.extension = ('add-steel')
 		options.type = this.$el.find($('.steel_type option:selected')).text();
 		options.section = this.$el.find($('.steel_section option:selected')).text();
@@ -72,7 +71,7 @@ Add = Marionette.ItemView.extend({
 		options.comments = this.$el.find($('#comments')).val();
 
 		// Steel Log Data
-		options.added_by = user.username;
+		options.added_by = window.App.instance.get('user').get('username');
 		options.date_added = moment().toDate();
 
 		var steel_item = new Model(options);
