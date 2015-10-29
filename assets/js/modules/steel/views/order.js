@@ -2,7 +2,7 @@ var $ = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone = require('backbone'),
 	moment = require('moment'),
-	SteelLog = require('../../../models/steel_log'),
+	SteelLog = require('../../logs/steel/model'),
     Template = require('./templates/order.hbs');
 
 Order = Marionette.ItemView.extend({
