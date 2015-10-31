@@ -74,7 +74,7 @@ Edit = Marionette.ItemView.extend({
 	},
 	submitForm : function(){
 		var options = {};
-		options.extension = ('/update-steel')
+		options.extension = ('/update-steel');
 		options.type = this.$el.find($('.steel_type option:selected')).text();
 		options.section = this.$el.find($('.steel_section option:selected')).text();
 		options.grade = this.$el.find($('.steel_grade option:selected')).text();
@@ -82,8 +82,7 @@ Edit = Marionette.ItemView.extend({
 		options.quantity = this.$el.find($('#quantity')).val();
 		options.comments = this.$el.find($('#comments')).val();
 
-		this.model.save(options)
-		.done(function(response){
+		this.model.save(options).done(function(response){
 			console.log(response);
 		});
 	}

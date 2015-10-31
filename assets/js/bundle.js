@@ -9,7 +9,7 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
-App.apiURL =  'https://intense-thicket-2598.herokuapp.com/api'; //'http://localhost:8080/api';
+App.apiURL =  'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
 //'https://intense-thicket-2598.herokuapp.com/api';
 
 
@@ -429,7 +429,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"home-container\">\n	<div id=\"search\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-search\" aria-hidden=\"true\"></span>\n		<p>Search Materials</p>\n	</div>\n	<div id=\"add\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n		<p>Add Materials</p>\n	</div>\n</div>";
+    return "<div class=\"home-container\">\n	<div id=\"search\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-search\" aria-hidden=\"true\"></span>\n		<p>Search</p>\n	</div>\n	<div id=\"add\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n		<p>Add</p>\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],14:[function(require,module,exports){
@@ -972,7 +972,7 @@ Edit = Marionette.ItemView.extend({
 	},
 	submitForm : function(){
 		var options = {};
-		options.extension = ('/update-steel')
+		options.extension = ('/update-steel');
 		options.type = this.$el.find($('.steel_type option:selected')).text();
 		options.section = this.$el.find($('.steel_section option:selected')).text();
 		options.grade = this.$el.find($('.steel_grade option:selected')).text();
@@ -980,8 +980,7 @@ Edit = Marionette.ItemView.extend({
 		options.quantity = this.$el.find($('#quantity')).val();
 		options.comments = this.$el.find($('#comments')).val();
 
-		this.model.save(options)
-		.done(function(response){
+		this.model.save(options).done(function(response){
 			console.log(response);
 		});
 	}
@@ -1240,13 +1239,17 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     var helper, alias1=helpers.helperMissing, alias2="function", alias3=container.escapeExpression;
 
   return "				<option value=\""
-    + alias3(((helper = (helper = helpers.typeId || (depth0 != null ? depth0.typeId : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"typeId","hash":{},"data":data}) : helper)))
+    + alias3(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"type","hash":{},"data":data}) : helper)))
     + "\" selected >"
     + alias3(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"type","hash":{},"data":data}) : helper)))
     + "</option>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "				<option>"
-    + container.escapeExpression(container.lambda(depth0, depth0))
+    var alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "				<option value=\""
+    + alias2(alias1(depth0, depth0))
+    + "\">"
+    + alias2(alias1(depth0, depth0))
     + "</option>\n";
 },"5":function(container,depth0,helpers,partials,data) {
     var helper;
@@ -1255,17 +1258,21 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + container.escapeExpression(((helper = (helper = helpers.section || (depth0 != null ? depth0.section : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"section","hash":{},"data":data}) : helper)))
     + "</option>\n";
 },"7":function(container,depth0,helpers,partials,data) {
+    return "				<option>"
+    + container.escapeExpression(container.lambda(depth0, depth0))
+    + "</option>\n";
+},"9":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "				<option selected >"
     + container.escapeExpression(((helper = (helper = helpers.grade || (depth0 != null ? depth0.grade : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"grade","hash":{},"data":data}) : helper)))
     + " </option>\n";
-},"9":function(container,depth0,helpers,partials,data) {
+},"11":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "value="
     + container.escapeExpression(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)));
-},"11":function(container,depth0,helpers,partials,data) {
+},"13":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "value="
@@ -1273,19 +1280,19 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper;
 
-  return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select class=\"form-control\" id=\"sd\" class=\"steel_type selectmenu\">\n"
+  return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.types : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"form-control\" class=\"steel_section\">\n"
+    + "			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.section : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.sections : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"form-control\" class=\"steel_grade\">\n"
-    + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.grade : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.grades : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.sections : depth0),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n"
+    + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.grade : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.grades : depth0),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" "
-    + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.length : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.length : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + " id=\"length\" name=\"length\" type=\"number\">\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" "
-    + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.quantity : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.quantity : depth0),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + " id=\"quantity\" name=\"quantity\" type=\"number\">\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\">"
     + container.escapeExpression(((helper = (helper = helpers.comments || (depth0 != null ? depth0.comments : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"comments","hash":{},"data":data}) : helper)))
     + "</textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n</div>";

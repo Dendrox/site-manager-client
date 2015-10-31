@@ -1,18 +1,18 @@
 <div class="form-container">
 	<form class="add_steel">
 		<label for="">Type</label>
-		<select class="form-control" id="sd" class="steel_type selectmenu">
+		<select id="sd" class="steel_type selectmenu form-control">
 			{{#if type}}
-				<option value="{{typeId}}" selected >{{type}}</option>
+				<option value="{{type}}" selected >{{type}}</option>
 			{{/if}}
 			{{#each types}}
-				<option>{{this}}</option>
+				<option value="{{this}}">{{this}}</option>
 			{{/each}}
 			
 		</select>
 
 		<label for="">Section</label>
-		<select class="form-control" class="steel_section">
+		<select class="steel_section form-control">
 			{{#if section}}
 				<option selected >{{section}}</option>
 			{{/if}}
@@ -22,7 +22,7 @@
 		</select>
 
 		<label for="">Grade</label>
-		<select class="form-control" class="steel_grade">
+		<select class="steel_grade form-control">
 			{{#if grade}}
 				<option selected >{{grade}} </option>
 			{{/if}}
