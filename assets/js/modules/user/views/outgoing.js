@@ -37,7 +37,6 @@ var Item = Marionette.ItemView.extend({
 		this.model.set('extension', 'delete-steel')
 		this.model.destroy()
 		.done(function(response){
-			alert('Item Deleted');
 		})
 		.fail(function(response){
 			console.log(response)

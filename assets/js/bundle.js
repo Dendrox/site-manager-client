@@ -968,7 +968,6 @@ Edit = Marionette.ItemView.extend({
 		this.render(this.model);
 	},
 	cancelForm : function(){
-		alert('FIX: item should be temporarily removed from db while editing')
 		window.history.back();
 	},
 	submitForm : function(){
@@ -1742,7 +1741,6 @@ var Item = Marionette.ItemView.extend({
 		this.model.set('extension', 'delete-steel')
 		this.model.destroy()
 		.done(function(response){
-			alert('Item Deleted');
 		})
 		.fail(function(response){
 			console.log(response)

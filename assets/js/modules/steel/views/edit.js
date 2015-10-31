@@ -70,7 +70,6 @@ Edit = Marionette.ItemView.extend({
 		this.render(this.model);
 	},
 	cancelForm : function(){
-		alert('FIX: item should be temporarily removed from db while editing')
 		window.history.back();
 	},
 	submitForm : function(){
