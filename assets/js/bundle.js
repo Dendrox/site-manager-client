@@ -9,8 +9,8 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
-App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api'; //'http://localhost:8080/api';
-//;
+App.apiURL =  'https://intense-thicket-2598.herokuapp.com/api'; //'http://localhost:8080/api';
+//'https://intense-thicket-2598.herokuapp.com/api';
 
 
 // NOTE: This needs to be moved maybe to a boot module
@@ -280,6 +280,7 @@ Model = Backbone.Model.extend({
 		session : Session
 	},
 	initialize : function(){
+		this.defaults.steelTypes.fetch();
 	}
 });
 
@@ -368,7 +369,7 @@ var $ = require('jquery'),
 Index = Marionette.ItemView.extend({
 	id : 'home-view',
 	tagName : 'div',
-	className : 'home-container',
+	className : 'home-view',
 	template : Template,
 	events : {
 		'click div#search' : 'searchMaterials',
@@ -428,7 +429,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"home-container\">\n	<div id=\"search\" class=\"list-item\"><p>Search Materials</p></div>\n	<div id=\"add\" class=\"list-item\"><p>Add Materials</p></div>\n</div>";
+    return "<div class=\"home-container\">\n	<div id=\"search\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-search\" aria-hidden=\"true\"></span>\n		<p>Search Materials</p>\n	</div>\n	<div id=\"add\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n		<p>Add Materials</p>\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],14:[function(require,module,exports){
@@ -587,7 +588,7 @@ Backbone.$ = $;
 Index = Marionette.ItemView.extend({
 	id : 'login-view',
 	tagName : 'div',
-	className : 'login-container',
+	className : 'login-view',
 	template : Template,
 
 	events : {
@@ -820,32 +821,31 @@ Add = Marionette.ItemView.extend({
 	template : Template,
 	events : {
 		'click input#submit-form' : 'submitForm',
+		'click input#cancel-form' : 'cancelForm',
 		'change select.steel_type' : 'renderSections'
 	},
 	initialize : function(){
-		this.collection = new ItemClass();
-		var self = this;
-		this.collection.fetch()
-		.done(function(response){
-			self.onShow();
-		})
-		.fail(function(response){
-			console.log(response)
-		})
-		this.listenTo( this.collection, 'reset', this.render);
+		
+		this.collection = window.App.instance.get('steelTypes');
 		
 	},
 	onShow : function(){
 		// Render Type Options
-		this.collection.each(function(model){
+		console.log(this.collection);
+		var self = this;
+
+		this.collection.each(function(model, i){
+			console.log(model.get('type'), i);
 			var type = model.get('type');
 			var id = model.id;
-			this.$el.find($('.steel_type')).append('<option value="'+id+'">'+type+'</option>');
+
+			console.log(self.$el.find('.steel_type'))
+			self.$el.find('.steel_type').append('<option value="'+id+'">'+type+'</option>');
 		}, this);
 	},
 	renderSections : function(e){
-		this.$el.find($('.steel_section')).empty().append('<option value="">Please select</option>');
-		this.$el.find($('.steel_grade')).empty().append('<option value="">Please select</option>');
+		this.$el.find('.steel_section').empty().append('<option value="">Please select</option>');
+		this.$el.find('.steel_grade').empty().append('<option value="">Please select</option>');
 
 		var typeID = $(e.currentTarget).val();
 		if(typeID.length){
@@ -857,24 +857,27 @@ Add = Marionette.ItemView.extend({
 
 			// Render Section Options
 			$.each(validSections, function(value, section){
-				_this.$el.find($('.steel_section')).append('<option value="'+value+'">'+section+'</option>');
+				_this.$el.find('.steel_section').append('<option value="'+value+'">'+section+'</option>');
 			});
 
 			// Render Grade Options
 			$.each(grades, function(value, grade){
-				_this.$el.find($('.steel_grade')).append('<option value="'+value+'">'+grade+'</option>');
+				_this.$el.find('.steel_grade').append('<option value="'+value+'">'+grade+'</option>');
 			});	
 		};//end if
+	},
+	cancelForm : function(){
+		window.history.back();
 	},
 	submitForm : function(){
 		var options = {};
 		options.extension = ('add-steel')
-		options.type = this.$el.find($('.steel_type option:selected')).text();
-		options.section = this.$el.find($('.steel_section option:selected')).text();
-		options.grade = this.$el.find($('.steel_grade option:selected')).text();
-		options.length = this.$el.find($('#length ')).val();
-		options.quantity = this.$el.find($('#quantity')).val();
-		options.comments = this.$el.find($('#comments')).val();
+		options.type = this.$el.find('.steel_type option:selected').text();
+		options.section = this.$el.find('.steel_section option:selected').text();
+		options.grade = this.$el.find('.steel_grade option:selected').text();
+		options.length = this.$el.find('#length ').val();
+		options.quantity = this.$el.find('#quantity').val();
+		options.comments = this.$el.find('#comments').val();
 
 		// Steel Log Data
 		options.added_by = window.App.instance.get('user').get('username');
@@ -907,6 +910,7 @@ Edit = Marionette.ItemView.extend({
 	template : Template,
 	events : {
 		'click input#submit-form' : 'submitForm',
+		'click input#cancel-form' : 'cancelForm',
 		'change select.steel_type' : 'renderSections'
 	},
 	initialize : function(){
@@ -963,6 +967,10 @@ Edit = Marionette.ItemView.extend({
 
 		this.render(this.model);
 	},
+	cancelForm : function(){
+		alert('FIX: item should be temporarily removed from db while editing')
+		window.history.back();
+	},
 	submitForm : function(){
 		var options = {};
 		options.extension = ('/update-steel')
@@ -994,13 +1002,24 @@ Item = Marionette.ItemView.extend({
 	className : 'list_item',
 	template : Template,
 	events : {
-		'click div.steel-item' : 'orderItem'
+		'click div.steel-item' : 'orderItem',
+		'click button.info' : 'showInfo',
+		'click div.other-info' : 'hideInfo'
 	},
 	initialize : function(){
 		console.log('modular: item')
 	},
 	onShow : function(){
 		console.log('steel-item-view')
+	},
+	showInfo : function(e){
+		e.stopPropagation();
+		this.$el.find('.other-info').show();
+		console.log(this.model)
+	},
+	hideInfo : function(e){
+		e.stopPropagation();
+		this.$el.find('.other-info').hide();
 	},
 	orderItem : function(){
 		var item_id = this.model.id;
@@ -1212,7 +1231,7 @@ module.exports = Order;
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu\">\n			<option value=\"\">Please select</option>\n			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<label for=\"commments\">Comments</label>\n		<textarea id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input id=\"submit-form\" type=\"button\" value=\"submit\"/>\n	</form>\n</div>";
+    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],36:[function(require,module,exports){
@@ -1255,22 +1274,22 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper;
 
-  return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu\">\n"
+  return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select class=\"form-control\" id=\"sd\" class=\"steel_type selectmenu\">\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.types : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section\">\n"
+    + "			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"form-control\" class=\"steel_section\">\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.section : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.sections : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade\">\n"
+    + "		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"form-control\" class=\"steel_grade\">\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.grade : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.grades : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "		</select>\n\n		<label for=\"length\">Length</label>\n		<input "
+    + "		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" "
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.length : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " id=\"length\" name=\"length\" type=\"number\">\n\n		<label for=\"length\">Quantity</label>\n		<input "
+    + " id=\"length\" name=\"length\" type=\"number\">\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" "
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.quantity : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " id=\"quantity\" name=\"quantity\" type=\"number\">\n\n		<label for=\"commments\">Comments</label>\n		<textarea id=\"comments\" name=\"comments\" type=\"text\">"
+    + " id=\"quantity\" name=\"quantity\" type=\"number\">\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\">"
     + container.escapeExpression(((helper = (helper = helpers.comments || (depth0 != null ? depth0.comments : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"comments","hash":{},"data":data}) : helper)))
-    + "</textarea>\n		<input id=\"submit-form\" type=\"button\" value=\"submit\"/>\n	</form>\n</div>";
+    + "</textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],37:[function(require,module,exports){
@@ -1295,13 +1314,13 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
 },"5":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "		<select id=\"section-filter\">\n			<option value=\"\">All Sections</option>\n"
+  return "		<select id=\"section-filter\" class=\"form-control\">\n			<option value=\"\">All Sections</option>\n"
     + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.sections : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "		</select>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<div class=\"filter-container\">\n	<div id=\"filter\">\n		<label for=\"type-filter\"></label>\n		<select id=\"type-filter\">\n			<option value=\"\">All Types</option>\n"
+  return "<div class=\"filter-container\">\n	<div id=\"filter\">\n		<select id=\"type-filter\" class=\"form-control\">\n			<option value=\"\">All Types</option>\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.types : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "		</select>\n"
@@ -1333,9 +1352,13 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + alias3(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)))
     + "</p>\n						<p>Quantiy: "
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</p>\n					</div>\n					<div class=\"other-info\">\n						<p>"
+    + "</p>\n					</div>\n					<button class=\"info\">\n						<span class=\"icon glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>\n					</button>\n				</div>\n				<div class=\"other-info\">\n					<p>"
     + alias3(((helper = (helper = helpers.comments || (depth0 != null ? depth0.comments : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"comments","hash":{},"data":data}) : helper)))
-    + "</p>\n					</div>\n				</div>\n			</div>\n";
+    + "</p>\n					<p class=\"added_by\">"
+    + alias3(((helper = (helper = helpers.added_by || (depth0 != null ? depth0.added_by : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"added_by","hash":{},"data":data}) : helper)))
+    + "</p>\n					<p class=\"date_added\">"
+    + alias3(((helper = (helper = helpers.date_added || (depth0 != null ? depth0.date_added : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"date_added","hash":{},"data":data}) : helper)))
+    + "</p>\n				</div>\n			</div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -1382,7 +1405,7 @@ Collection = Backbone.Collection.extend({
 	},
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_types?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_types'
 	}
 
 });
@@ -1612,6 +1635,7 @@ var Item = Marionette.ItemView.extend({
 
 List = Marionette.CollectionView.extend({
 	tagname : 'div',
+	className: 'orders-view',
 	childView : Item,
 	initialize : function(){
 		
@@ -1634,11 +1658,12 @@ var $          = require('jquery'),
 Index = Marionette.ItemView.extend({
 	id : 'header-view',
 	tagName : 'div',
-	className : 'header-container',
+	className : 'header-view',
 	template : Template,
 	events : {
 		'click button#menu' : 'toggleMenu',
 		'click button#home' : 'navHome',
+		'click button#back' : 'goBack',
 		'click li#account'  : 'openAccount',
 		'click li#logout'  : 'logout'
 	},
@@ -1655,7 +1680,7 @@ Index = Marionette.ItemView.extend({
 	},
 	toggleMenu : function(e){
 		e.preventDefault();
-
+		
 		this.$el.find($('#menu-container')).css({'display' : 'block'});
 		e.stopPropagation()
 	},
@@ -1664,6 +1689,9 @@ Index = Marionette.ItemView.extend({
 	},
 	navHome : function(){
 		Backbone.history.navigate('home', {trigger : true});
+	},
+	goBack : function(){
+		window.history.back();
 	},
 	logout: function(){
 		window.sessionStorage.removeItem('token');
@@ -1686,14 +1714,26 @@ var Item = Marionette.ItemView.extend({
 	className : 'list_item',
 	template : Template,
 	events : {
-		'click button.edit' : 'editPost',
-		'click button.delete' : 'deleteItem'
+		'click li#edit' : 'editPost',
+		'click li#delete' : 'deleteItem',
+		'click button.options' : 'showOptions'
 	},
 	initialize : function(){
-		
+		var self = this;
+		$(document).on('click', function(e) {
+		    if(!$(e.target).is('.actions-container')) {
+		      self.$el.find('.actions-container').css({'display' : 'none'});
+		    }
+		});
 	},
 	onShow : function(){
 		console.log(this.model)
+	},
+	showOptions : function(e){
+		e.preventDefault();
+		
+		this.$el.find('.actions-container').css({'display' : 'block'});
+		e.stopPropagation()
 	},
 	editPost : function(){
 		Backbone.history.navigate('edit/'+this.model.id, {trigger : true})
@@ -1702,7 +1742,7 @@ var Item = Marionette.ItemView.extend({
 		this.model.set('extension', 'delete-steel')
 		this.model.destroy()
 		.done(function(response){
-			console.log(response)
+			alert('Item Deleted');
 		})
 		.fail(function(response){
 			console.log(response)
@@ -1713,6 +1753,7 @@ var Item = Marionette.ItemView.extend({
 List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : Item,
+	className : 'posts-view',
 	initialize : function(){
 		
 		this.collection.fetch({
@@ -1747,7 +1788,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"header-container\">\n	<button id=\"menu\">Menu</button>\n	<button id=\"home\">Home</button>\n	<div class=\"mc\" id=\"menu-container\">\n		<ul>\n			<li class=\"menu-option\" id=\"account\">My Account</li>\n			<li class=\"menu-option\" id=\"logout\">Log Out</li>\n		</ul>\n	</div>\n</div>	";
+    return "<div class=\"header-container\">\n	<button id=\"menu\"><span class=\"icon glyphicon glyphicon-user\" aria-hidden=\"true\"></span></button>\n	<button id=\"home\"><span class=\"icon glyphicon glyphicon-home\" aria-hidden=\"true\"></span></button>\n	<button id=\"back\"><span class=\"icon glyphicon glyphicon-chevron-left\" aria-hidden=\"true\"></span></button>\n	<div class=\"mc\" id=\"menu-container\">\n		<ul>\n			<li class=\"menu-option\" id=\"account\">My Account\n				<span class=\"icon glyphicon glyphicon-folder-open\" aria-hidden=\"true\">\n			</li>\n			<li class=\"menu-option\" id=\"logout\">Log Out\n			<span class=\"icon glyphicon glyphicon-log-out\" aria-hidden=\"true\">\n			</li>\n		</ul>\n	</div>\n</div>	";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],54:[function(require,module,exports){
@@ -1760,13 +1801,13 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + alias3(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"type","hash":{},"data":data}) : helper)))
     + "</h3><br>\n		<p class=\"sub-heading\">"
     + alias3(((helper = (helper = helpers.section || (depth0 != null ? depth0.section : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"section","hash":{},"data":data}) : helper)))
-    + "</p>\n		<div class=\"details\">\n			<p>Grade: "
+    + "</p>\n		<div class=\"details\">\n			<p>Grade: <b>"
     + alias3(((helper = (helper = helpers.grade || (depth0 != null ? depth0.grade : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"grade","hash":{},"data":data}) : helper)))
-    + "</p>\n			<p>Length: "
+    + "</b></p>\n			<p>Length: <b>"
     + alias3(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)))
-    + "</p>\n			<p>Quantiy: "
+    + "</b></p>\n			<p>Quantiy: <b>"
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</p>\n		</div>\n		<div class=\"actions\">\n			<button class=\"edit\">Edit</button>\n			<button class=\"delete\">Delete</button>\n		</div>\n	</div>\n</div>";
+    + "</b></p>\n		</div>\n		<button class=\"options\">\n			<span class=\"icon glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span>\n		</button>\n		<div class=\"mc actions-container\" id=\"actions-container\">\n			<ul>\n				<li class=\"menu-option\" id=\"edit\">Edit\n				</li>\n				<li class=\"menu-option\" id=\"delete\">Delete\n				</li>\n			</ul>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],55:[function(require,module,exports){
@@ -1784,12 +1825,11 @@ var $ = require('jquery'),
 Transactions = Marionette.ItemView.extend({
 	id : 'account-view',
 	tagName : 'div',
-	className : 'account-container',
+	className : 'account-view',
 	template : Template,
 	events : {
 		'click #ordered_items' : 'viewIncoming',
 		'click #added_items' : 'viewOutgoing'
-
 	},
 	initialize : function(){
 		console.log('ored')

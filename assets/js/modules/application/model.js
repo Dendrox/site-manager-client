@@ -13,6 +13,7 @@ Model = Backbone.Model.extend({
 		session : Session
 	},
 	initialize : function(){
+		this.defaults.steelTypes.fetch();
 	}
 });
 

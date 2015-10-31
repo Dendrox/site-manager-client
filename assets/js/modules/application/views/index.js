@@ -6,7 +6,7 @@ var $ = require('jquery'),
 Index = Marionette.ItemView.extend({
 	id : 'home-view',
 	tagName : 'div',
-	className : 'home-container',
+	className : 'home-view',
 	template : Template,
 	events : {
 		'click div#search' : 'searchMaterials',

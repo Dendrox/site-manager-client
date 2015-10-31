@@ -3,13 +3,22 @@
 		<h3>{{type}}</h3><br>
 		<p class="sub-heading">{{section}}</p>
 		<div class="details">
-			<p>Grade: {{grade}}</p>
-			<p>Length: {{length}}</p>
-			<p>Quantiy: {{quantity}}</p>
+			<p>Grade: <b>{{grade}}</b></p>
+			<p>Length: <b>{{length}}</b></p>
+			<p>Quantiy: <b>{{quantity}}</b></p>
 		</div>
-		<div class="actions">
-			<button class="edit">Edit</button>
-			<button class="delete">Delete</button>
+		<button class="options">
+			<span class="icon glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+		</button>
+		<div class="mc actions-container" id="actions-container">
+			<ul>
+				<li class="menu-option" id="edit">Edit
+					{{!-- <span class="icon glyphicon glyphicon-folder-open" aria-hidden="true"> --}}
+				</li>
+				<li class="menu-option" id="delete">Delete
+					{{!-- <span class="icon glyphicon glyphicon-log-out" aria-hidden="true"> --}}
+				</li>
+			</ul>
 		</div>
 	</div>
 </div>

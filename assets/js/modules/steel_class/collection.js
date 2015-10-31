@@ -10,7 +10,7 @@ Collection = Backbone.Collection.extend({
 	},
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_types?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_types'
 	}
 
 });

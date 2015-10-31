@@ -9,7 +9,7 @@ Backbone.$ = $;
 Index = Marionette.ItemView.extend({
 	id : 'login-view',
 	tagName : 'div',
-	className : 'login-container',
+	className : 'login-view',
 	template : Template,
 
 	events : {

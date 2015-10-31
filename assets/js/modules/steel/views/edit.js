@@ -12,6 +12,7 @@ Edit = Marionette.ItemView.extend({
 	template : Template,
 	events : {
 		'click input#submit-form' : 'submitForm',
+		'click input#cancel-form' : 'cancelForm',
 		'change select.steel_type' : 'renderSections'
 	},
 	initialize : function(){
@@ -67,6 +68,10 @@ Edit = Marionette.ItemView.extend({
 		_.extend(this.model.attributes, options);
 
 		this.render(this.model);
+	},
+	cancelForm : function(){
+		alert('FIX: item should be temporarily removed from db while editing')
+		window.history.back();
 	},
 	submitForm : function(){
 		var options = {};

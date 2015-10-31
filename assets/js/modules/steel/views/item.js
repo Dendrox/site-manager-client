@@ -9,13 +9,24 @@ Item = Marionette.ItemView.extend({
 	className : 'list_item',
 	template : Template,
 	events : {
-		'click div.steel-item' : 'orderItem'
+		'click div.steel-item' : 'orderItem',
+		'click button.info' : 'showInfo',
+		'click div.other-info' : 'hideInfo'
 	},
 	initialize : function(){
 		console.log('modular: item')
 	},
 	onShow : function(){
 		console.log('steel-item-view')
+	},
+	showInfo : function(e){
+		e.stopPropagation();
+		this.$el.find('.other-info').show();
+		console.log(this.model)
+	},
+	hideInfo : function(e){
+		e.stopPropagation();
+		this.$el.find('.other-info').hide();
 	},
 	orderItem : function(){
 		var item_id = this.model.id;

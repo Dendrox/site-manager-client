@@ -1,7 +1,6 @@
 <div class="filter-container">
 	<div id="filter">
-		<label for="type-filter"></label>
-		<select id="type-filter">
+		<select id="type-filter" class="form-control">
 			<option value="">All Types</option>
 			{{#if type}}
 				<option selected value="{{type}}">{{type}}</option>
@@ -11,7 +10,7 @@
 			{{/each}}
 		</select>
 		{{#if sections}}
-		<select id="section-filter">
+		<select id="section-filter" class="form-control">
 			<option value="">All Sections</option>
 			{{#each sections}}
 			<option value="{{this}}">{{this}}</option>

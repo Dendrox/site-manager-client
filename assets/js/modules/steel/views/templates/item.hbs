@@ -11,9 +11,14 @@
 						<p>Length: {{length}}</p>
 						<p>Quantiy: {{quantity}}</p>
 					</div>
-					<div class="other-info">
-						<p>{{comments}}</p>
-					</div>
+					<button class="info">
+						<span class="icon glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="other-info">
+					<p>{{comments}}</p>
+					<p class="added_by">{{added_by}}</p>
+					<p class="date_added">{{date_added}}</p>
 				</div>
 			</div>
 		{{/unless}}

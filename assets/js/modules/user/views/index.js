@@ -7,11 +7,12 @@ var $          = require('jquery'),
 Index = Marionette.ItemView.extend({
 	id : 'header-view',
 	tagName : 'div',
-	className : 'header-container',
+	className : 'header-view',
 	template : Template,
 	events : {
 		'click button#menu' : 'toggleMenu',
 		'click button#home' : 'navHome',
+		'click button#back' : 'goBack',
 		'click li#account'  : 'openAccount',
 		'click li#logout'  : 'logout'
 	},
@@ -28,7 +29,7 @@ Index = Marionette.ItemView.extend({
 	},
 	toggleMenu : function(e){
 		e.preventDefault();
-
+		
 		this.$el.find($('#menu-container')).css({'display' : 'block'});
 		e.stopPropagation()
 	},
@@ -37,6 +38,9 @@ Index = Marionette.ItemView.extend({
 	},
 	navHome : function(){
 		Backbone.history.navigate('home', {trigger : true});
+	},
+	goBack : function(){
+		window.history.back();
 	},
 	logout: function(){
 		window.sessionStorage.removeItem('token');

@@ -5,12 +5,11 @@ var $ = require('jquery'),
 Transactions = Marionette.ItemView.extend({
 	id : 'account-view',
 	tagName : 'div',
-	className : 'account-container',
+	className : 'account-view',
 	template : Template,
 	events : {
 		'click #ordered_items' : 'viewIncoming',
 		'click #added_items' : 'viewOutgoing'
-
 	},
 	initialize : function(){
 		console.log('ored')

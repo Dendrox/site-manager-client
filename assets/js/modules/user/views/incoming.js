@@ -15,6 +15,7 @@ var Item = Marionette.ItemView.extend({
 
 List = Marionette.CollectionView.extend({
 	tagname : 'div',
+	className: 'orders-view',
 	childView : Item,
 	initialize : function(){
 		

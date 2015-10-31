@@ -19,31 +19,42 @@ body, html {
 		z-index: 999;
 
 		.background{
-			background-color: #e8e8e8;
-			border-bottom: 1px solid #d8d8d8;
+			background-color: #267712;
+			border-bottom: 1px solid #287515;
 			width: 100%;
 			height: 100%;
 		}
 
-		.header-container{
+		.header-view{
+
+			.icon{
+				color: #fff;
+				font-size: 25px;
+			}
+
+			button{
+				background-color: transparent;
+				border-radius: 0;
+				border: none;
+			}
 
 			button#menu{
 				position: absolute;
 				right: 10px;
 				height: 30px;
 				top: 10px;
-				background-color: #efefef;
-				border-radius: 0;
-				border: 1px solid #d8d8d8;
 			}
 			button#home{
 				position: absolute;
-				right: 100px;
+				right: 80px;
 				height: 30px;
 				top: 10px;
-				background-color: #efefef;
-				border-radius: 0;
-				border: 1px solid #d8d8d8;
+			}
+			button#back{
+				position: absolute;
+				left: 10px;
+				height: 30px;
+				top: 10px;
 			}
 
 			#menu-container{
@@ -52,8 +63,7 @@ body, html {
 				top: 55px;
 				width: 150px;
 				height: auto;
-				background-color: #e8e8e8;
-				border: 1px solid #d6d6d6;
+				background-color: #E1E6DF;
 				display: none;
 
 				// Interchangeable Class
@@ -66,11 +76,21 @@ body, html {
 					margin: 0;
 
 					li{
-						height: 25px;
-						border-bottom: 1px solid #d8d8d8;
-						text-align: center;
+						.icon{
+							color: #1B4A10;
+							font-size: 15px;
+							position: absolute;
+							right: 10px;
+							top: 12px;
+						}
+						position: relative;
+						height: 40px;
+						border-bottom: 1px solid #CDD6CB;
+						text-align: left;
+						padding: 0 10px;
 						font-size: 14px;
-						line-height: 25px;
+						line-height: 40px;
+						color: #1B4A10;
 
 					}
 				}
@@ -83,7 +103,22 @@ body, html {
 		#filter-view{
 			margin-top: 50px;
 		    padding: 10px 20px;
-		    background-color: #72B976;
+		    background-color: #2F8C18;
+
+		    select{
+		    	border: none;
+		    	border-radius: 0;
+		    	-webkit-border-radius: 0;
+		    	width: 100px;
+		    	height: 25px;
+		    	border-bottom: 1px solid #60B367;
+		    	background-color: #2F8C18;
+		    	margin-right: 10px;
+		    	padding: 3px;
+		    	color: #E0FFE2;
+		    	font-size: 11px;
+		    	display: inline-block;
+		    }
 		}
 	}
 	#loading-region{
@@ -110,13 +145,14 @@ body, html {
 
 	#main-region{
 		width: 100%;
-		margin-top: 50px;
+		//margin-top: 50px;
 		//border: 1px solid green;
 
-		.login-container{
+		.login-view{
 			width: 90%;
 			float: left;
 			margin-left: 5%;
+			margin-top: 50px;
 
 			div#logo{
 				text-align: center;
@@ -150,9 +186,10 @@ body, html {
 			}
 			
 		}
-		.home-container, .material_list-container, .account-container{
+		.home-view, .material_list-container, .account-view, .posts-view, .orders-view{
 			width: 100%;
 			float: left;
+			margin-top: 50px;
 
 			.list-item{
 				width: 100%;
@@ -166,11 +203,31 @@ body, html {
 					line-height: 80px;
 				}
 			}
+			.home-container .list-item{
+				width: 50%;
+				height: 100px;
+				padding-top: 40px;
+				float: left;
+				border: none;
+				color: #333;
+
+				p{
+					margin: 0;
+					line-height: 40px;
+				}
+
+				.icon{
+					font-size: 40px;
+					color: #267712;
+				}
+			}
 		}
 
 		.form-container{
 			width: 100%;
 			float: left;
+			margin-top: 50px;
+			padding: 20px 0;
 
 			form.add_steel{
 				float: left;
@@ -179,17 +236,77 @@ body, html {
 
 				label{
 					float: left;
+					color: #165207;
 				}
 
 				input, select, textarea{
 					width: 100%;
-					margin-bottom: 30px;
+					margin-bottom: 20px;
 				}
+
+				.confirm{
+					width: 70%;
+					height: 30px;
+					border: 1px solid #165207;
+					background-color: #267712;
+					color: #efefef;
+					float: right;
+					display: inline-block;
+					border-radius: 2px;
+				}
+				.cancel{
+					width: 20%;
+					height: 30px;
+					border: 1px solid #d8d8d8;
+					background-color: #e8e8e8;
+					color: #333;
+					float: left;
+					display: inline-block;
+				}
+			}
+		}
+
+		.steel_order-container{
+			margin-top: 50px;
+    		padding: 10px 20px;
+
+    		h3{
+    			color: #165207; 
+    		}
+
+    		table {
+    			width: 100%;
+    			margin-bottom: 50px;
+    			tr{
+	    			height: 50px;
+	    			border-bottom: 1px solid #efefef;
+	    		}
+    		}
+
+    		button.confirm_order{
+				width: 70%;
+				height: 30px;
+				border: 1px solid #165207;
+				background-color: #267712;
+				color: #efefef;
+				float: right;
+				display: inline-block;
+				border-radius: 2px;
+			}
+			button.cancel_order{
+				width: 20%;
+				height: 30px;
+				border: 1px solid #d8d8d8;
+				background-color: #e8e8e8;
+				color: #333;
+				float: left;
+				display: inline-block;
 			}
 		}
 
 		.steel_item-container{
 			width: 100%;
+			position: relative;
 			float: left;
 
 			div.steel-item{
@@ -197,14 +314,34 @@ body, html {
 				float: left;
 				margin-left: 5%;
 				width: 90%;
-				height: 80px;
+				height: 90px;
 				border-bottom: 1px solid #efefef;
+
+				button.options, button.info{
+					position: absolute;
+					right: 0;
+					top: 32px;
+					background-color: transparent;
+					width: 26px;
+					height: 26px;
+					border: none;
+					border: 1px solid #D6E9C6;
+					border-radius: 50%;
+					text-align: center;
+
+					span{
+						font-size: 13px;
+						color: #267712;
+						margin-top: 3px;
+					}
+				}
 
 				h3{
 					position: absolute;
 					top: 0;
 					left:0;
 					font-size: 14px;
+					color: #165207
 				}
 
 				p{
@@ -213,10 +350,16 @@ body, html {
 				}
 				p.sub-heading{
 					position: absolute;
-					top: 20px;
+					top: 40px;
 					left: 0;
 					font-size: 12px;
 					color: #666;
+				}
+				p.status{
+					position: absolute;
+					top: 20px;
+					right: 0;
+					color: #8FBB8F;
 				}
 
 				div.details{
@@ -231,21 +374,59 @@ body, html {
 					}
 				}
 
-				div.actions{
-					position: absolute;
-					right: 0;
-					top: 20px;
-
-				}
-
-				div.other-info{
+				div.actions-container{
 					display: none;
+					position: absolute;
+				    right: 0;
+				    top: 10px;
+				    width: 100px;
+					height: auto;
+					background-color: #E1E6DF;
+
+					// Interchangeable Class
+
+					ul{
+						width: 100%;
+						list-style: none;
+						padding: 0;
+						margin: 0;
+
+						li{
+							.icon{
+								color: #1B4A10;
+								font-size: 15px;
+								position: absolute;
+								right: 10px;
+								top: 12px;
+							}
+							position: relative;
+							height: 40px;
+							border-bottom: 1px solid #CDD6CB;
+							text-align: center;
+							padding: 0 10px;
+							font-size: 14px;
+							line-height: 40px;
+							color: #1B4A10;
+
+						}
+					}
 				}
 
 				input, select, textarea{
 					width: 100%;
 					margin-bottom: 30px;
 				}
+			}
+			div.other-info{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.8);
+				color: #efefef;
+				display: none;
+				padding: 10px 20px;
 			}
 		}
 	}

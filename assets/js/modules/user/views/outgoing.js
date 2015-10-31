@@ -9,14 +9,26 @@ var Item = Marionette.ItemView.extend({
 	className : 'list_item',
 	template : Template,
 	events : {
-		'click button.edit' : 'editPost',
-		'click button.delete' : 'deleteItem'
+		'click li#edit' : 'editPost',
+		'click li#delete' : 'deleteItem',
+		'click button.options' : 'showOptions'
 	},
 	initialize : function(){
-		
+		var self = this;
+		$(document).on('click', function(e) {
+		    if(!$(e.target).is('.actions-container')) {
+		      self.$el.find('.actions-container').css({'display' : 'none'});
+		    }
+		});
 	},
 	onShow : function(){
 		console.log(this.model)
+	},
+	showOptions : function(e){
+		e.preventDefault();
+		
+		this.$el.find('.actions-container').css({'display' : 'block'});
+		e.stopPropagation()
 	},
 	editPost : function(){
 		Backbone.history.navigate('edit/'+this.model.id, {trigger : true})
@@ -25,7 +37,7 @@ var Item = Marionette.ItemView.extend({
 		this.model.set('extension', 'delete-steel')
 		this.model.destroy()
 		.done(function(response){
-			console.log(response)
+			alert('Item Deleted');
 		})
 		.fail(function(response){
 			console.log(response)
@@ -36,6 +48,7 @@ var Item = Marionette.ItemView.extend({
 List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : Item,
+	className : 'posts-view',
 	initialize : function(){
 		
 		this.collection.fetch({
