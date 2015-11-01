@@ -6,7 +6,7 @@ var $        = require('jquery'),
 Collection = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_items/posts?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_items/users?token=' + window.sessionStorage.token
 	}
 });
 

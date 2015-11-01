@@ -11,7 +11,7 @@ Model = Backbone.Model.extend({
 		lastname  : '',
 		phone     : '',
 		location  : '',
-		incoming  : new Logs.Collection(),
+		incoming  : new Collection(),
 		outgoing  : new Collection()
 	},
 	initialize : function(){

@@ -26,40 +26,46 @@ Order = Marionette.ItemView.extend({
 		})
 	},
 	confirmOrder : function(){
+		var _this = this;
+
+		this.model.save({
+			'ordered_by'  : window.App.instance.get('user').get('username'),
+			'date_ordered': moment().toDate(),
+			'available'   : false, 
+			'extension'   : 'update-steel',
+			'status'      : 'pending'
+		}).done(function(response){
+			_this.$el.find($('.confirmation')).html(response.message);
+		});
+
 		var options = this.model.toJSON();
 		options.extension = 'steel_log';
 		options.date_ordered = moment().toDate();
 		options.ordered_by = window.App.instance.get('user').get('username');
 
 		delete options.id
-		
+			
+		// FIX: This is a mess - GET RID OF IT
 		var steelLog = new SteelLog(options);
 		var _this = this;
 
 		steelLog.save()
 		.done(function(response){
-			console.log(response);
-			_this.model.set('extension', 'delete-steel')
-			_this.model.destroy()
-			.done(function(response){
-				console.log(response)
-				_this.$el.find($('.confirmation')).html(response.message)
-				Backbone.history.navigate('confirmation', {trigger : true})
-			})
-			.fail(function(response){
-				console.log(response)
-			})
+			console.log(response)
+			_this.$el.find($('.confirmation')).html(response.message)
+			Backbone.history.navigate('confirmation', {trigger : true})
 		});
 	},
 	cancelOrder : function(){
-		this.model.save({
-			'available' : true, 
-			'extension' : 'update-steel'
-		})
-		.done(function(response){
-			console.log(response);
-			Backbone.history.navigate('search/steel', {trigger:true});
-		})
+		// REMOVE: ONCE STEEL LOGS ARE GONE
+		// this.model.save({
+		// 	'available' : true, 
+		// 	'extension' : 'update-steel'
+		// })
+		// .done(function(response){
+		// 	console.log(response);
+		Backbone.history.navigate('search/steel', {trigger:true});
+		// })
 	}
 
 });

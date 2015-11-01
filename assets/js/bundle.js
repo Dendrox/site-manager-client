@@ -9,7 +9,7 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
-App.apiURL =  'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
+App.apiURL =  'http://localhost:8080/api';
 //'https://intense-thicket-2598.herokuapp.com/api';
 
 
@@ -1020,17 +1020,14 @@ Item = Marionette.ItemView.extend({
 		this.$el.find('.other-info').hide();
 	},
 	orderItem : function(){
-		var item_id = this.model.id;
-		this.model.save({
-			'available' : false, 
-			'extension' : 'update-steel',
-		})
-		.done(function(response){
-			console.log(response);
-			console.log('response');
+		// var item_id = this.model.id;
+		// this.model.save({
+		// 	'available' : false, 
+		// 	'extension' : 'update-steel',
+		// })
 
-			Backbone.history.navigate('order/'+item_id, {trigger:true});
-		})
+			Backbone.history.navigate('order/'+this.model.id, {trigger:true});
+		// })
 	}
 
 });
@@ -1186,40 +1183,46 @@ Order = Marionette.ItemView.extend({
 		})
 	},
 	confirmOrder : function(){
+		var _this = this;
+
+		this.model.save({
+			'ordered_by'  : window.App.instance.get('user').get('username'),
+			'date_ordered': moment().toDate(),
+			'available'   : false, 
+			'extension'   : 'update-steel',
+			'status'      : 'pending'
+		}).done(function(response){
+			_this.$el.find($('.confirmation')).html(response.message);
+		});
+
 		var options = this.model.toJSON();
 		options.extension = 'steel_log';
 		options.date_ordered = moment().toDate();
 		options.ordered_by = window.App.instance.get('user').get('username');
 
 		delete options.id
-		
+			
+		// FIX: This is a mess - GET RID OF IT
 		var steelLog = new SteelLog(options);
 		var _this = this;
 
 		steelLog.save()
 		.done(function(response){
-			console.log(response);
-			_this.model.set('extension', 'delete-steel')
-			_this.model.destroy()
-			.done(function(response){
-				console.log(response)
-				_this.$el.find($('.confirmation')).html(response.message)
-				Backbone.history.navigate('confirmation', {trigger : true})
-			})
-			.fail(function(response){
-				console.log(response)
-			})
+			console.log(response)
+			_this.$el.find($('.confirmation')).html(response.message)
+			Backbone.history.navigate('confirmation', {trigger : true})
 		});
 	},
 	cancelOrder : function(){
-		this.model.save({
-			'available' : true, 
-			'extension' : 'update-steel'
-		})
-		.done(function(response){
-			console.log(response);
-			Backbone.history.navigate('search/steel', {trigger:true});
-		})
+		// REMOVE: ONCE STEEL LOGS ARE GONE
+		// this.model.save({
+		// 	'available' : true, 
+		// 	'extension' : 'update-steel'
+		// })
+		// .done(function(response){
+		// 	console.log(response);
+		Backbone.history.navigate('search/steel', {trigger:true});
+		// })
 	}
 
 });
@@ -1468,7 +1471,7 @@ var $        = require('jquery'),
 Collection = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_items/posts?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_items/users?token=' + window.sessionStorage.token
 	}
 });
 
@@ -1525,7 +1528,7 @@ Model = Backbone.Model.extend({
 		lastname  : '',
 		phone     : '',
 		location  : '',
-		incoming  : new Logs.Collection(),
+		incoming  : new Collection(),
 		outgoing  : new Collection()
 	},
 	initialize : function(){
@@ -1803,7 +1806,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
 },{"hbsfy/runtime":82}],54:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
     var helper, alias1=helpers.helperMissing, alias2="function", alias3=container.escapeExpression;
 
   return "<div class=\"steel_item-container\">\n	<div class=\"steel-item\">\n		<h3>"
@@ -1816,7 +1819,11 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + alias3(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)))
     + "</b></p>\n			<p>Quantiy: <b>"
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</b></p>\n		</div>\n		<button class=\"options\">\n			<span class=\"icon glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span>\n		</button>\n		<div class=\"mc actions-container\" id=\"actions-container\">\n			<ul>\n				<li class=\"menu-option\" id=\"edit\">Edit\n				</li>\n				<li class=\"menu-option\" id=\"delete\">Delete\n				</li>\n			</ul>\n		</div>\n	</div>\n</div>";
+    + "</b></p>\n		</div>\n		<button class=\"options\">\n			<span class=\"icon glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span>\n		</button>\n		<div class=\"mc actions-container\" id=\"actions-container\">\n			<ul>\n				<li class=\"menu-option\" id=\"edit\">Edit\n				</li>\n				<li class=\"menu-option\" id=\"delete\">Delete\n				</li>\n			</ul>\n		</div>\n	</div>\n</div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.available : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
 },{"hbsfy/runtime":82}],55:[function(require,module,exports){
