@@ -1745,9 +1745,13 @@ var Item = Marionette.ItemView.extend({
 		Backbone.history.navigate('edit/'+this.model.id, {trigger : true})
 	},
 	deleteItem : function(){
-		this.model.set('extension', 'delete-steel')
+		this.model.set('extension', 'delete-steel');
+
+		var self = this;
+
 		this.model.destroy()
 		.done(function(response){
+			self.$el.remove()
 		})
 		.fail(function(response){
 			console.log(response)
