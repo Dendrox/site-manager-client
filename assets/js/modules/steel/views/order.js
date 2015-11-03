@@ -12,7 +12,9 @@ Order = Marionette.ItemView.extend({
 	template : Template,
 	events : {
 		'click button.confirm_order' : 'confirmOrder',
-		'click button.cancel_order' : 'cancelOrder'
+		'click button.cancel_order' : 'cancelOrder',
+		'click button#my_orders' : 'viewOrder',
+		'click button#home' : 'goHome'
 	},
 	initialize : function(){
 		var self = this;
@@ -28,6 +30,7 @@ Order = Marionette.ItemView.extend({
 	confirmOrder : function(){
 		var _this = this;
 
+		this.$el.find('.steel_order').empty();
 		this.model.save({
 			'ordered_by'  : window.App.instance.get('user').get('username'),
 			'date_ordered': moment().toDate(),
@@ -35,7 +38,7 @@ Order = Marionette.ItemView.extend({
 			'extension'   : 'update-steel',
 			'status'      : 'pending'
 		}).done(function(response){
-			_this.$el.find($('.confirmation')).html(response.message);
+			_this.$el.find($('.confirmation')).show();
 		});
 
 		var options = this.model.toJSON();
@@ -64,8 +67,14 @@ Order = Marionette.ItemView.extend({
 		// })
 		// .done(function(response){
 		// 	console.log(response);
-		Backbone.history.navigate('search/steel', {trigger:true});
+		Backbone.history.navigate('search/steel', {trigger: true});
 		// })
+	},
+	viewOrder: function(){
+		Backbone.history.navigate('transactions/incoming', {trigger: true});
+	},
+	goHome: function(){
+		Backbone.history.navigate('home', {trigger: true});
 	}
 
 });

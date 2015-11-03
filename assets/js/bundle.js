@@ -24,8 +24,6 @@ var Controller   = require('./controller'),
 
 App.instance = new Application.Model();
 
-
-
 // Add Viewing Regions
 App.addRegions({
 	mainRegion : '#main-region',
@@ -1169,7 +1167,9 @@ Order = Marionette.ItemView.extend({
 	template : Template,
 	events : {
 		'click button.confirm_order' : 'confirmOrder',
-		'click button.cancel_order' : 'cancelOrder'
+		'click button.cancel_order' : 'cancelOrder',
+		'click button#my_orders' : 'viewOrder',
+		'click button#home' : 'goHome'
 	},
 	initialize : function(){
 		var self = this;
@@ -1185,6 +1185,7 @@ Order = Marionette.ItemView.extend({
 	confirmOrder : function(){
 		var _this = this;
 
+		this.$el.find('.steel_order').empty();
 		this.model.save({
 			'ordered_by'  : window.App.instance.get('user').get('username'),
 			'date_ordered': moment().toDate(),
@@ -1192,7 +1193,7 @@ Order = Marionette.ItemView.extend({
 			'extension'   : 'update-steel',
 			'status'      : 'pending'
 		}).done(function(response){
-			_this.$el.find($('.confirmation')).html(response.message);
+			_this.$el.find($('.confirmation')).show();
 		});
 
 		var options = this.model.toJSON();
@@ -1221,8 +1222,14 @@ Order = Marionette.ItemView.extend({
 		// })
 		// .done(function(response){
 		// 	console.log(response);
-		Backbone.history.navigate('search/steel', {trigger:true});
+		Backbone.history.navigate('search/steel', {trigger: true});
 		// })
+	},
+	viewOrder: function(){
+		Backbone.history.navigate('transactions/incoming', {trigger: true});
+	},
+	goHome: function(){
+		Backbone.history.navigate('home', {trigger: true});
 	}
 
 });
@@ -1398,7 +1405,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "</td>\n			</tr>\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.comments : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "		</table>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n		<div class=\"confirmation\"></div>\n	</div>\n</div>";
+    + "		</table>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n			<div class=\"confirm_header\">\n				<h4>Order Confirmed!</h4>\n			</div>\n			<div class=\"text\">\n				<p>Your order has been confirmed!</p>\n			</div>\n			<div class=\"actions\">\n				<button id=\"my_orders\">My Orders</button>\n				<button id=\"home\">Home</button>\n			</div>\n		</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],40:[function(require,module,exports){

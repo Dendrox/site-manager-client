@@ -23,8 +23,6 @@ var Controller   = require('./controller'),
 
 App.instance = new Application.Model();
 
-
-
 // Add Viewing Regions
 App.addRegions({
 	mainRegion : '#main-region',
