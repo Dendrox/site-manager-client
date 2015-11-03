@@ -69,7 +69,7 @@ body, html {
 				background-color: #E1E6DF;
 				border: 1px solid #D4DCD0;
 				display: none;
-				box-shadow: 1px 1px 10px 1px #d8d8d8;
+				box-shadow: 1px 1px 3px 2px #e8e8e8;
 
 				// Interchangeable Class
 				
@@ -270,52 +270,10 @@ body, html {
 					display: inline-block;
 				}
 			}
-		}
-
-		.steel_order-container{
-			margin-top: 50px;
-    		padding: 10px 20px;
-
-    		h3{
-    			color: #165207; 
-    		}
-
-    		table {
-    			width: 100%;
-    			margin-bottom: 50px;
-    			tr{
-	    			height: 50px;
-	    			border-bottom: 1px solid #efefef;
-
-	    			th{
-	    				width: 40%;
-	    			}
-	    		}
-    		}
-
-    		button.confirm_order{
-				width: 70%;
-				height: 30px;
-				border: 1px solid #165207;
-				background-color: #267712;
-				color: #efefef;
-				float: right;
-				display: inline-block;
-				border-radius: 2px;
-			}
-			button.cancel_order{
-				width: 20%;
-				height: 30px;
-				border: 1px solid #d8d8d8;
-				background-color: #e8e8e8;
-				color: #333;
-				float: left;
-				display: inline-block;
-			}
 
 			div.confirmation{
 				position: absolute;
-				top: 200px;
+				top: 170px;
 				left: 50%;
 				margin-left: -125px;
 				width: 250px;
@@ -373,7 +331,119 @@ body, html {
 						width: 50%;
 						height: 100%;
 					}
-					button#my_orders{
+					button#view{
+						border-left: 1px solid #ddd; 
+						right: 0;
+					}
+					button#home{
+						left: 0;
+					}
+				}
+			}
+		}
+
+		.steel_order-container{
+			margin-top: 50px;
+    		padding: 10px 20px;
+
+    		h3{
+    			color: #165207; 
+    		}
+
+    		table {
+    			width: 100%;
+    			margin-bottom: 50px;
+    			tr{
+	    			height: 50px;
+	    			border-bottom: 1px solid #efefef;
+
+	    			th{
+	    				width: 40%;
+	    			}
+	    		}
+    		}
+
+    		button.confirm_order{
+				width: 70%;
+				height: 30px;
+				border: 1px solid #165207;
+				background-color: #267712;
+				color: #efefef;
+				float: right;
+				display: inline-block;
+				border-radius: 2px;
+			}
+			button.cancel_order{
+				width: 20%;
+				height: 30px;
+				border: 1px solid #d8d8d8;
+				background-color: #e8e8e8;
+				color: #333;
+				float: left;
+				display: inline-block;
+			}
+
+			div.confirmation{
+				position: absolute;
+				top: 170px;
+				left: 50%;
+				margin-left: -125px;
+				width: 250px;
+				height: 200px;
+				border-radius: 3px;
+				box-shadow: 1px 1px 3px 2px #e8e8e8; 
+				background-color: #efefef;
+				border: 1px solid #ddd;
+				display: none;
+
+				div.confirm_header{
+					position: absolute;
+					top: 0;
+					left: 0;
+					background-color: #267712;
+					width: 100%;
+					height: 40px;
+					z-index: 99;
+					padding: 5px 10px;
+
+					h4{
+						color: #fff;
+						margin: 0;
+						line-height: 30px;
+						font-weight: normal;
+					}
+				}
+
+				div.text{
+					position: absolute;
+					width: 100%;
+					top: 50px;
+					left: 0;
+					height: 130px;
+					padding: 20px 15px;
+
+					p{
+						color: #165207;
+					}
+				}
+
+				div.actions{
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					height: 38px;
+					width: 100%;
+					border-top: 1px solid #ddd;
+
+					button{
+						position: absolute;
+						top: 0;
+						border: none;
+						background-color: #ECECEC;
+						width: 50%;
+						height: 100%;
+					}
+					button#view{
 						border-left: 1px solid #ddd; 
 						right: 0;
 					}
@@ -463,8 +533,8 @@ body, html {
 					height: auto;
 					background-color: #E1E6DF;
 					border: 1px solid #D4DCD0;
-					box-shadow: 1px 1px 10px -5px #ddd;
-					-webkit-box-shadow: 1px 1px 10px 1px #ddd;
+					box-shadow: 1px 1px 3px 2px #e8e8e8;
+					-webkit-box-shadow: 1px 1px 3px 2px #e8e8e8;
 
 					// Interchangeable Class
 

@@ -82,7 +82,11 @@ Edit = Marionette.ItemView.extend({
 		options.quantity = this.$el.find($('#quantity')).val();
 		options.comments = this.$el.find($('#comments')).val();
 
-		this.model.save(options).done(function(response){
+		var self = this;
+		this.model.save(options).always(function(){
+			self.$el.find('form.add_steel').empty();
+		}).done(function(response){
+			Backbone.history.navigate('transactions/outgoing', {trigger: true})
 			console.log(response);
 		});
 	}

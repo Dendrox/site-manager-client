@@ -820,6 +820,8 @@ Add = Marionette.ItemView.extend({
 	events : {
 		'click input#submit-form' : 'submitForm',
 		'click input#cancel-form' : 'cancelForm',
+		'click button#view' : 'viewOutgoing',
+		'click button#home' : 'goHome',
 		'change select.steel_type' : 'renderSections'
 	},
 	initialize : function(){
@@ -882,13 +884,25 @@ Add = Marionette.ItemView.extend({
 		options.date_added = moment().toDate();
 
 		var steel_item = new Model(options);
+
+		var _this = this;
+		this.$el.find('form.add_steel').empty();
 		steel_item.save()
 		.done(function(response){
-			console.log(response)
+			_this.$el.find($('.confirmation')).show();
 		})
 		.fail(function(response){
+			// NOTE: Some thing needs to go here
 			console.log(response);
 		})
+	},
+	viewOutgoing: function(){
+		this.$el.find($('.confirmation')).hide();
+		Backbone.history.navigate('transactions/outgoing', {trigger: true});
+	},
+	goHome: function(){
+		this.$el.find($('.confirmation')).hide();
+		Backbone.history.navigate('home', {trigger: true});
 	}
 });
 
@@ -978,7 +992,11 @@ Edit = Marionette.ItemView.extend({
 		options.quantity = this.$el.find($('#quantity')).val();
 		options.comments = this.$el.find($('#comments')).val();
 
-		this.model.save(options).done(function(response){
+		var self = this;
+		this.model.save(options).always(function(){
+			self.$el.find('form.add_steel').empty();
+		}).done(function(response){
+			Backbone.history.navigate('transactions/outgoing', {trigger: true})
 			console.log(response);
 		});
 	}
@@ -1168,7 +1186,7 @@ Order = Marionette.ItemView.extend({
 	events : {
 		'click button.confirm_order' : 'confirmOrder',
 		'click button.cancel_order' : 'cancelOrder',
-		'click button#my_orders' : 'viewOrder',
+		'click button#view' : 'viewOrder',
 		'click button#home' : 'goHome'
 	},
 	initialize : function(){
@@ -1204,15 +1222,15 @@ Order = Marionette.ItemView.extend({
 		delete options.id
 			
 		// FIX: This is a mess - GET RID OF IT
-		var steelLog = new SteelLog(options);
-		var _this = this;
+		// var steelLog = new SteelLog(options);
+		// var _this = this;
 
-		steelLog.save()
-		.done(function(response){
-			console.log(response)
-			_this.$el.find($('.confirmation')).html(response.message)
-			Backbone.history.navigate('confirmation', {trigger : true})
-		});
+		// steelLog.save()
+		// .done(function(response){
+		// 	console.log(response)
+		// 	_this.$el.find($('.confirmation')).html(response.message)
+		// 	Backbone.history.navigate('confirmation', {trigger : true})
+		// });
 	},
 	cancelOrder : function(){
 		// REMOVE: ONCE STEEL LOGS ARE GONE
@@ -1226,9 +1244,11 @@ Order = Marionette.ItemView.extend({
 		// })
 	},
 	viewOrder: function(){
+		this.$el.find($('.confirmation')).hide();
 		Backbone.history.navigate('transactions/incoming', {trigger: true});
 	},
 	goHome: function(){
+		this.$el.find($('.confirmation')).hide();
 		Backbone.history.navigate('home', {trigger: true});
 	}
 
@@ -1239,7 +1259,7 @@ module.exports = Order;
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n</div>";
+    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Item Added!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Item has been added!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],36:[function(require,module,exports){
@@ -1405,7 +1425,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "</td>\n			</tr>\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.comments : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "		</table>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n			<div class=\"confirm_header\">\n				<h4>Order Confirmed!</h4>\n			</div>\n			<div class=\"text\">\n				<p>Your order has been confirmed!</p>\n			</div>\n			<div class=\"actions\">\n				<button id=\"my_orders\">My Orders</button>\n				<button id=\"home\">Home</button>\n			</div>\n		</div>\n</div>";
+    + "		</table>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Order Confirmed!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Your order has been confirmed!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],40:[function(require,module,exports){

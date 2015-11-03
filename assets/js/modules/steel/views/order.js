@@ -13,7 +13,7 @@ Order = Marionette.ItemView.extend({
 	events : {
 		'click button.confirm_order' : 'confirmOrder',
 		'click button.cancel_order' : 'cancelOrder',
-		'click button#my_orders' : 'viewOrder',
+		'click button#view' : 'viewOrder',
 		'click button#home' : 'goHome'
 	},
 	initialize : function(){
@@ -49,15 +49,15 @@ Order = Marionette.ItemView.extend({
 		delete options.id
 			
 		// FIX: This is a mess - GET RID OF IT
-		var steelLog = new SteelLog(options);
-		var _this = this;
+		// var steelLog = new SteelLog(options);
+		// var _this = this;
 
-		steelLog.save()
-		.done(function(response){
-			console.log(response)
-			_this.$el.find($('.confirmation')).html(response.message)
-			Backbone.history.navigate('confirmation', {trigger : true})
-		});
+		// steelLog.save()
+		// .done(function(response){
+		// 	console.log(response)
+		// 	_this.$el.find($('.confirmation')).html(response.message)
+		// 	Backbone.history.navigate('confirmation', {trigger : true})
+		// });
 	},
 	cancelOrder : function(){
 		// REMOVE: ONCE STEEL LOGS ARE GONE
@@ -71,9 +71,11 @@ Order = Marionette.ItemView.extend({
 		// })
 	},
 	viewOrder: function(){
+		this.$el.find($('.confirmation')).hide();
 		Backbone.history.navigate('transactions/incoming', {trigger: true});
 	},
 	goHome: function(){
+		this.$el.find($('.confirmation')).hide();
 		Backbone.history.navigate('home', {trigger: true});
 	}
 

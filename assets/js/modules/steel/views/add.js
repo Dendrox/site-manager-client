@@ -15,6 +15,8 @@ Add = Marionette.ItemView.extend({
 	events : {
 		'click input#submit-form' : 'submitForm',
 		'click input#cancel-form' : 'cancelForm',
+		'click button#view' : 'viewOutgoing',
+		'click button#home' : 'goHome',
 		'change select.steel_type' : 'renderSections'
 	},
 	initialize : function(){
@@ -77,13 +79,25 @@ Add = Marionette.ItemView.extend({
 		options.date_added = moment().toDate();
 
 		var steel_item = new Model(options);
+
+		var _this = this;
+		this.$el.find('form.add_steel').empty();
 		steel_item.save()
 		.done(function(response){
-			console.log(response)
+			_this.$el.find($('.confirmation')).show();
 		})
 		.fail(function(response){
+			// NOTE: Some thing needs to go here
 			console.log(response);
 		})
+	},
+	viewOutgoing: function(){
+		this.$el.find($('.confirmation')).hide();
+		Backbone.history.navigate('transactions/outgoing', {trigger: true});
+	},
+	goHome: function(){
+		this.$el.find($('.confirmation')).hide();
+		Backbone.history.navigate('home', {trigger: true});
 	}
 });
 
