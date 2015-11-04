@@ -14,13 +14,22 @@ Router = Backbone.Router.extend({
 		this.controller = new Controller()
 	},
 	viewTransactions : function(){
-		this.controller.viewTransactions()
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.viewTransactions()
 	},
 	viewIncoming : function(){
-		this.controller.viewIncoming();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.viewIncoming();
 	},
 	viewOutgoing : function(){
-		this.controller.viewOutgoing();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.viewOutgoing();
 	}	
 });
 

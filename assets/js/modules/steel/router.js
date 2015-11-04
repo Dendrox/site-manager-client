@@ -17,19 +17,34 @@ Router = Backbone.Router.extend({
 		this.controller = new Controller();
 	},
 	add : function(){
-		this.controller.add();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.add();
 	},
 	search : function(){
-		this.controller.search();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.search();
 	},
 	order : function(id){
-		this.controller.order(id);
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.order(id);
 	},
     edit : function(id){
-       this.controller.edit(id);
+    	if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+        	this.controller.edit(id);
     },
     view : function(id){
-       this.controller.view(id);
+    	if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+        	this.controller.view(id);
     }
 });
 

@@ -315,13 +315,22 @@ var Router = Backbone.Router.extend({
 		console.log('Router Initialized')
 	},
 	navHome : function(){
-		this.controller.navHome();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.navHome();
 	},
 	addMaterials : function(){
-		this.controller.addMaterials();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.addMaterials();
 	},
 	searchMaterials : function(){
-		this.controller.searchMaterials();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.searchMaterials();
 	}
 });
 
@@ -775,19 +784,34 @@ Router = Backbone.Router.extend({
 		this.controller = new Controller();
 	},
 	add : function(){
-		this.controller.add();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.add();
 	},
 	search : function(){
-		this.controller.search();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.search();
 	},
 	order : function(id){
-		this.controller.order(id);
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.order(id);
 	},
     edit : function(id){
-       this.controller.edit(id);
+    	if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+        	this.controller.edit(id);
     },
     view : function(id){
-       this.controller.view(id);
+    	if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+        	this.controller.view(id);
     }
 });
 
@@ -1630,13 +1654,22 @@ Router = Backbone.Router.extend({
 		this.controller = new Controller()
 	},
 	viewTransactions : function(){
-		this.controller.viewTransactions()
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.viewTransactions()
 	},
 	viewIncoming : function(){
-		this.controller.viewIncoming();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.viewIncoming();
 	},
 	viewOutgoing : function(){
-		this.controller.viewOutgoing();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.viewOutgoing();
 	}	
 });
 

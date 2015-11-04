@@ -15,13 +15,22 @@ var Router = Backbone.Router.extend({
 		console.log('Router Initialized')
 	},
 	navHome : function(){
-		this.controller.navHome();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.navHome();
 	},
 	addMaterials : function(){
-		this.controller.addMaterials();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.addMaterials();
 	},
 	searchMaterials : function(){
-		this.controller.searchMaterials();
+		if(!window.sessionStorage.token)
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.searchMaterials();
 	}
 });
 
