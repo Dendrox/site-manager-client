@@ -1412,13 +1412,15 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + alias3(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)))
     + "</p>\n						<p>Quantiy: "
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</p>\n					</div>\n					<button class=\"info\">\n						<span class=\"icon glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>\n					</button>\n				</div>\n				<div class=\"other-info\">\n					<p>"
+    + "</p>\n					</div>\n					<button class=\"info\">\n						<span class=\"icon glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>\n					</button>\n				</div>\n				<div class=\"other-info\">\n					<div class=\"comments\">\n						<p class=\"comment\">"
     + alias3(((helper = (helper = helpers.comments || (depth0 != null ? depth0.comments : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"comments","hash":{},"data":data}) : helper)))
-    + "</p>\n					<p class=\"added_by\">"
+    + "</p>\n					</div>\n					<div class=\"details\">\n						<p class=\"added_by\">"
     + alias3(((helper = (helper = helpers.added_by || (depth0 != null ? depth0.added_by : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"added_by","hash":{},"data":data}) : helper)))
-    + "</p>\n					<p class=\"date_added\">"
+    + "</p>\n						<p class=\"date_added\">"
     + alias3(((helper = (helper = helpers.date_added || (depth0 != null ? depth0.date_added : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"date_added","hash":{},"data":data}) : helper)))
-    + "</p>\n				</div>\n			</div>\n";
+    + "</p>\n					</div>\n					<span phone=\""
+    + alias3(((helper = (helper = helpers.phone || (depth0 != null ? depth0.phone : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"phone","hash":{},"data":data}) : helper)))
+    + "\" class=\"glyphicon glyphicon-earphone\"></span>\n				</div>\n			</div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 

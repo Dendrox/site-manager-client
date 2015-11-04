@@ -16,9 +16,14 @@
 					</button>
 				</div>
 				<div class="other-info">
-					<p>{{comments}}</p>
-					<p class="added_by">{{added_by}}</p>
-					<p class="date_added">{{date_added}}</p>
+					<div class="comments">
+						<p class="comment">{{comments}}</p>
+					</div>
+					<div class="details">
+						<p class="added_by">{{added_by}}</p>
+						<p class="date_added">{{date_added}}</p>
+					</div>
+					<span phone="{{phone}}" class="glyphicon glyphicon-earphone"></span>
 				</div>
 			</div>
 		{{/unless}}
