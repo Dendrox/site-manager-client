@@ -32,13 +32,16 @@ Index = Marionette.ItemView.extend({
 		}
 		this.model.fetch({data:data})
 		.done(function(response){
-			console.log(response);
-			window.sessionStorage.token = response.token;
-			
-			Backbone.history.navigate('home', {trigger : true})
+			if(!response.success){
+				return;
+			}
+			else{
+				window.sessionStorage.token = response.token;
+				Backbone.history.navigate('home', {trigger : true});
+			}
 		})
 		.fail(function(err){
-			console.log(err)
+			console.error(err)
 		});
 	}
 
