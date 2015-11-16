@@ -27,12 +27,18 @@ Index = Marionette.ItemView.extend({
 	authenticateUser : function(){
 		console.log('authenticateUser')
 		var data = {
-			username : $('#username').val(),
-			password : $('#password').val()
+			username : 'rody.kirwan@gmail.co',//$('#username').val(),
+			password : 'site1'//$('#password').val()
 		}
+		var self = this;
 		this.model.fetch({data:data})
 		.done(function(response){
 			if(!response.success){
+				self.$el.find('.error').append('<h3>'+response.message.title+'</h3><p>'+response.message.text+'</p>');
+				self.$el.find('.error').show();
+				setTimeout(function(){
+					self.$el.find('.error').fadeOut();
+				}, 3000);
 				return;
 			}
 			else{

@@ -613,12 +613,18 @@ Index = Marionette.ItemView.extend({
 	authenticateUser : function(){
 		console.log('authenticateUser')
 		var data = {
-			username : $('#username').val(),
-			password : $('#password').val()
+			username : 'rody.kirwan@gmail.co',//$('#username').val(),
+			password : 'site1'//$('#password').val()
 		}
+		var self = this;
 		this.model.fetch({data:data})
 		.done(function(response){
 			if(!response.success){
+				self.$el.find('.error').append('<h3>'+response.message.title+'</h3><p>'+response.message.text+'</p>');
+				self.$el.find('.error').show();
+				setTimeout(function(){
+					self.$el.find('.error').fadeOut();
+				}, 3000);
 				return;
 			}
 			else{
@@ -638,7 +644,7 @@ module.exports = Index;
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"login-container\">\n	<div id=\"logo\">\n		<img src=\"assets/img/logo.png\">\n	</div>\n	<div class=\"login-details\">\n		<input id=\"username\" placeholder=\" Username\" type=\"text\"/>\n		<span class=\"errors\"></span>\n		\n		<input id=\"password\" placeholder=\" Password\" type=\"password\"/>\n		<span class=\"errors\"></span>\n\n		<button id=\"submit_password\">Submit</button>\n\n		<span class=\"validate_response\"></span>\n	</div>\n</div>";
+    return "<div class=\"login-container\">\n	<div id=\"logo\">\n		<img src=\"assets/img/logo.png\">\n	</div>\n	<div class=\"login-details\">\n		<input id=\"username\" placeholder=\" Username\" type=\"text\"/>\n		<span class=\"errors\"></span>\n		\n		<input id=\"password\" placeholder=\" Password\" type=\"password\"/>\n		<span class=\"errors\"></span>\n\n		<button id=\"submit_password\">Submit</button>\n\n		<span class=\"validate_response\"></span>\n		<div class=\"error\">\n			<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],24:[function(require,module,exports){
