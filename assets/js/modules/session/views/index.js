@@ -27,8 +27,8 @@ Index = Marionette.ItemView.extend({
 	authenticateUser : function(){
 		console.log('authenticateUser')
 		var data = {
-			username : 'rody.kirwan@gmail.co',//$('#username').val(),
-			password : 'site1'//$('#password').val()
+			username : $('#username').val(),
+			password : $('#password').val()
 		}
 		var self = this;
 		this.model.fetch({data:data})

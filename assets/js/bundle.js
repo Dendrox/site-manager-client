@@ -613,8 +613,8 @@ Index = Marionette.ItemView.extend({
 	authenticateUser : function(){
 		console.log('authenticateUser')
 		var data = {
-			username : 'rody.kirwan@gmail.co',//$('#username').val(),
-			password : 'site1'//$('#password').val()
+			username : $('#username').val(),
+			password : $('#password').val()
 		}
 		var self = this;
 		this.model.fetch({data:data})
@@ -851,7 +851,7 @@ Add = Marionette.ItemView.extend({
 	className : 'add-steel-el',
 	template : Template,
 	events : {
-		'click input#submit-form' : 'submitForm',
+		'click input#submit-form' : 'validateForm',
 		'click input#cancel-form' : 'cancelForm',
 		'click button#view' : 'viewOutgoing',
 		'click button#home' : 'goHome',
@@ -860,6 +860,7 @@ Add = Marionette.ItemView.extend({
 	initialize : function(){
 		
 		this.collection = window.App.instance.get('steelTypes');
+		this.formValid = false;
 		
 	},
 	onShow : function(){
@@ -902,9 +903,48 @@ Add = Marionette.ItemView.extend({
 	cancelForm : function(){
 		window.history.back();
 	},
-	submitForm : function(){
+	submitForm : function(options){
+		// var options = {};
+		// options.extension = ('add-steel');
+		// options.type = this.$el.find('.steel_type option:selected').text();
+		// options.section = this.$el.find('.steel_section option:selected').text();
+		// options.grade = this.$el.find('.steel_grade option:selected').text();
+		// //options.length = this.$el.find('#length ').val();
+		// options.quantity = this.$el.find('#quantity').val();
+		// options.comments = this.$el.find('#comments').val();
+
+		// // Steel Log Data
+		// options.added_by = window.App.instance.get('user').get('username');
+		// options.date_added = moment().toDate();
+
+		// var _this = this;
+		// debugger;
+		// // Loop through each item to check for empty strings
+		// $.each(options, function(key, value){
+		// 	if(value == ''){
+				// _this.$el.find('.error').append('<h3>Submission Failed!</h3><p>Please fill in all fields</p>');
+				// _this.$el.find('.error').show();
+				// return;
+		// 	}
+		// });
+		var _this = this;
+
+		var steel_item = new Model(options);
+		this.$el.find('form.add_steel').empty();
+		//debugger;
+
+		steel_item.save()
+		.done(function(response){
+			_this.$el.find($('.confirmation')).show();
+		})
+		.fail(function(response){
+			// NOTE: Some thing needs to go here
+			console.log(response);
+		})
+	},
+	validateForm: function(){
 		var options = {};
-		options.extension = ('add-steel')
+		options.extension = ('add-steel');
 		options.type = this.$el.find('.steel_type option:selected').text();
 		options.section = this.$el.find('.steel_section option:selected').text();
 		options.grade = this.$el.find('.steel_grade option:selected').text();
@@ -916,18 +956,28 @@ Add = Marionette.ItemView.extend({
 		options.added_by = window.App.instance.get('user').get('username');
 		options.date_added = moment().toDate();
 
-		var steel_item = new Model(options);
-
 		var _this = this;
-		this.$el.find('form.add_steel').empty();
-		steel_item.save()
-		.done(function(response){
-			_this.$el.find($('.confirmation')).show();
-		})
-		.fail(function(response){
-			// NOTE: Some thing needs to go here
-			console.log(response);
-		})
+
+		// NOTE: Need to find a better way to do this
+		var counter = 0;
+		var inputsToValidate = [options.type, options.section, options.grade, options.length, options.quantity];
+
+		// Loop through each item to check for empty strings
+		$.each(inputsToValidate, function(key, value){
+			if(value === '' || value === 'Please select' ){
+				_this.$el.find('.error').append('<h3>Submission Failed!</h3><p>Please fill in all fields</p>');
+				_this.$el.find('.error').show();
+				setTimeout(function(){
+					_this.$el.find('.error').fadeOut();
+				}, 3000);
+				return false;
+			}
+			else {
+				counter++;
+			}
+			if(key === (inputsToValidate.length - 1))
+				_this.submitForm(options);
+		});
 	},
 	viewOutgoing: function(){
 		this.$el.find($('.confirmation')).hide();
@@ -1292,7 +1342,7 @@ module.exports = Order;
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Item Added!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Item has been added!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>";
+    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Item Added!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Item has been added!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],36:[function(require,module,exports){
