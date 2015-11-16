@@ -38,6 +38,7 @@ Index = Marionette.ItemView.extend({
 				self.$el.find('.error').show();
 				setTimeout(function(){
 					self.$el.find('.error').fadeOut();
+					self.$el.find('.error').empty();
 				}, 3000);
 				return;
 			}
@@ -48,6 +49,13 @@ Index = Marionette.ItemView.extend({
 		})
 		.fail(function(err){
 			console.error(err)
+			self.$el.find('.error').append('<h3>'+err.statusText+'!</h3><p>Please fill in all fields</p>');
+				self.$el.find('.error').show();
+				setTimeout(function(){
+					self.$el.find('.error').fadeOut();
+					self.$el.find('.error h3').empty();
+					self.$el.find('.error p').empty();
+				}, 3000);
 		});
 	}
 
