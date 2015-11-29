@@ -1228,7 +1228,9 @@ Order = Marionette.ItemView.extend({
 		'click button.cancel_order' : 'cancelOrder',
 		'click button#view' : 'viewOrder',
 		'click button#home' : 'goHome',
-		'focus input#date_req' : 'selectDate'
+		'focus input#date_req' : 'selectDate',
+		'input input#date_req' : 'validateDate',
+		'change input#order_quantity' : 'validateQuantity'
 	},
 	initialize : function(){
 		var self = this;
@@ -1242,27 +1244,31 @@ Order = Marionette.ItemView.extend({
 		})
 	},
 	selectDate : function(){
-		this.$el.find('#date_req').datepicker();
+		this.$el.find('#date_req').datepicker({ 
+			minDate: 0,
+			dateFormat: 'dd/mm/yy'
+		});
 	},
 	validateOrder : function(){
 		var self = this;
+		var errors = false;
 
 		this.$el.find('input').each(function(key, input){
 			if(input.value === ''){
-
+				errors = true;
 				$('#'+input['id']).addClass('fieldError')
-				if((key+1) === fieldsToValidate){
-					self.$el.find('.error .text').empty().append('<h3>Order Failed!</h3><p>Please fill in all fields</p>');
+			}
+			if(errors === true && (key+1) === fieldsToValidate){
+				self.$el.find('.error .text').empty().append('<h3>Order Failed!</h3><p>Please fill in all fields</p>');
 					
-				    self.$el.find('.error').show();
-				    setTimeout(function(){
-						self.$el.find('.error').fadeOut();
-					}, 3000);
-					return false;
-				}
+			    self.$el.find('.error').show();
+			    setTimeout(function(){
+					self.$el.find('.error').fadeOut();
+				}, 3000);
+				return false;
 			}
 			else{
-				if((key+1) === fieldsToValidate){
+				if((key+1) === fieldsToValidate && errors === false){
 					var quantity_ordered = parseInt(self.$el.find('#order_quantity').val());
 					var new_quantity = self.model.get('quantity') - quantity_ordered;
 
@@ -1280,6 +1286,24 @@ Order = Marionette.ItemView.extend({
 				}
 			}
 		});
+	},
+	validateDate : function(){
+		console.log('input')
+	},
+	validateQuantity : function(e){
+		var self = this;
+		if($(e.currentTarget).val() > this.model.get('quantity')){
+			this.$el.find('.error .text').empty().append('<h3>Invalid Order!</h3><p>Quantity exceeds available amount of</p>');
+					
+		    this.$el.find('.error').show();
+		    $(e.currentTarget).addClass('fieldError');
+			this.$el.find('button.confirm_order').attr("disabled", true).addClass('disabled');
+		}
+		else{
+			this.$el.find('button.confirm_order').attr("disabled", false).removeClass('disabled');
+			$(e.currentTarget).removeClass('fieldError');
+			self.$el.find('.error').fadeOut();
+		}
 	},
 	confirmOrder : function(quantity_ordered, new_quantity, model, options){
 		var _this = this;
@@ -1466,7 +1490,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.available : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+  return ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.quantity : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
 },{"hbsfy/runtime":79}],36:[function(require,module,exports){
