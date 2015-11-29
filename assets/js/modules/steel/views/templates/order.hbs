@@ -12,13 +12,17 @@
 				<th>Length: </th><td>{{length}}</td>
 			</tr>
 			<tr>
-				<th>Quantity: </th><td>{{quantity}}</td>
+				<th>Quantity: </th><td> <input id="order_quantity" class="form-control" type="number" value={{quantity}}></td>
 			</tr>
-			{{#if comments}}
 			<tr>
-				<th>Comments: </th><td>{{comments}}</td>
+				<th>Job No: </th><td> <input id="job_number" class="form-control" type="number"></td>
 			</tr>
-			{{/if}}
+			<tr>
+				<th>Project: </th><td> <input id="location" class="form-control" type="text"></td>
+			</tr>
+			<tr>
+				<span><th>Date Required: </th><td> <input id="date_req" class="form-control" type="text"></td></span>
+			</tr>
 		</table>
 		<button class="confirm_order">Confirm</button>
 		<button class="cancel_order">Cancel</button>
@@ -34,5 +38,11 @@
 			<button id="view">View</button>
 			<button id="home">Home</button>
 		</div>
+	</div>
+</div>
+<div class="error">
+	<span class="glyphicon glyphicon-remove-circle icon" aria-hidden="true"></span>
+	<div class="text">
+		
 	</div>
 </div>

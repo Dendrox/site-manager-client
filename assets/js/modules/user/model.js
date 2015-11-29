@@ -1,8 +1,7 @@
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
-	Logs       = require('../logs/steel/module'),
 	Collection = require('./collection');
-	Backbone.$ = $;
+Backbone.$ = $;
 
 Model = Backbone.Model.extend({
 	defaults : {
@@ -11,8 +10,8 @@ Model = Backbone.Model.extend({
 		lastname  : '',
 		phone     : '',
 		location  : '',
-		incoming  : new Collection(),
-		outgoing  : new Collection()
+		incoming  : new Collection.Incoming(),
+		outgoing  : new Collection.Outgoing()
 	},
 	initialize : function(){
 		console.log('user initialized');

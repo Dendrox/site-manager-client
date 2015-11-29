@@ -38,13 +38,12 @@ var Item = Marionette.ItemView.extend({
 
 		var self = this;
 
-		this.model.destroy()
-		.done(function(response){
+		this.model.destroy().done(function(response){
 			self.$el.remove()
-		})
-		.fail(function(response){
+
+		}).fail(function(response){
 			console.log(response)
-		})
+		});
 	}
 });
 

@@ -20,6 +20,7 @@
     "handlebars": "^4.0.2",
     "hbsfy": "^2.2.1",
     "jquery": "^2.1.4",
+    "jquery-mobile": "^1.4.1",
     "jquery-ui": "^1.10.5",
     "less": "^2.5.1",
     "moment": "^2.10.6",

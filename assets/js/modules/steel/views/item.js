@@ -29,14 +29,7 @@ Item = Marionette.ItemView.extend({
 		this.$el.find('.other-info').hide();
 	},
 	orderItem : function(){
-		// var item_id = this.model.id;
-		// this.model.save({
-		// 	'available' : false, 
-		// 	'extension' : 'update-steel',
-		// })
-
-			Backbone.history.navigate('order/'+this.model.id, {trigger:true});
-		// })
+		Backbone.history.navigate('order/'+this.model.id, {trigger:true});
 	}
 
 });
