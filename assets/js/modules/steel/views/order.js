@@ -19,8 +19,12 @@ Order = Marionette.ItemView.extend({
 		'click button#view' : 'viewOrder',
 		'click button#home' : 'goHome',
 		'focus input#date_req' : 'selectDate',
+		'focusout input#date_req' : 'hideDateHint',
 		'input input#date_req' : 'validateDate'
 		//'change input#order_quantity' : 'validateQuantity'
+	},
+	hideDateHint : function(){
+		this.$el.find('div.hint').fadeOut();
 	},
 	initialize : function(){
 		var self = this;
@@ -34,10 +38,16 @@ Order = Marionette.ItemView.extend({
 		})
 	},
 	selectDate : function(){
+		var now = moment()._d;
+		var dateAvailable = moment(this.model.get('date_col'), 'DD-MM-YYYY')._d;
+
 		this.$el.find('#date_req').datepicker({ 
-			minDate: 0,
+			minDate: dateAvailable,
 			dateFormat: 'dd/mm/yy'
 		});
+		if( moment(dateAvailable).isAfter(now) ){
+			this.$el.find('div.hint').fadeIn();
+		}
 	},
 	validateOrder : function(){
 		var self = this;
@@ -80,9 +90,6 @@ Order = Marionette.ItemView.extend({
 				}
 			}
 		});
-	},
-	validateDate : function(){
-		console.log('input')
 	},
 	validateQuantity : function(){
 		var self = this;

@@ -1226,8 +1226,12 @@ Order = Marionette.ItemView.extend({
 		'click button#view' : 'viewOrder',
 		'click button#home' : 'goHome',
 		'focus input#date_req' : 'selectDate',
+		'focusout input#date_req' : 'hideDateHint',
 		'input input#date_req' : 'validateDate'
 		//'change input#order_quantity' : 'validateQuantity'
+	},
+	hideDateHint : function(){
+		this.$el.find('div.hint').fadeOut();
 	},
 	initialize : function(){
 		var self = this;
@@ -1241,10 +1245,16 @@ Order = Marionette.ItemView.extend({
 		})
 	},
 	selectDate : function(){
+		var now = moment()._d;
+		var dateAvailable = moment(this.model.get('date_col'), 'DD-MM-YYYY')._d;
+
 		this.$el.find('#date_req').datepicker({ 
-			minDate: 0,
+			minDate: dateAvailable,
 			dateFormat: 'dd/mm/yy'
 		});
+		if( moment(dateAvailable).isAfter(now) ){
+			this.$el.find('div.hint').fadeIn();
+		}
 	},
 	validateOrder : function(){
 		var self = this;
@@ -1287,9 +1297,6 @@ Order = Marionette.ItemView.extend({
 				}
 			}
 		});
-	},
-	validateDate : function(){
-		console.log('input')
 	},
 	validateQuantity : function(){
 		var self = this;
@@ -1515,7 +1522,9 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + alias3(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)))
     + "</td>\n			</tr>\n			<tr>\n				<th>Quantity: </th><td> <input id=\"order_quantity\" class=\"form-control\" type=\"number\" value="
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "></td>\n			</tr>\n			<tr>\n				<th>Job No: </th><td> <input id=\"job_number\" class=\"form-control\" type=\"number\"></td>\n			</tr>\n			<tr>\n				<th>Project: </th><td> <input id=\"location\" class=\"form-control\" type=\"text\"></td>\n			</tr>\n			<tr>\n				<span><th>Date Required: </th><td> <input readonly=\"true\" id=\"date_req\" class=\"form-control\" type=\"text\"></td></span>\n			</tr>\n		</table>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Order Confirmed!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Your order has been confirmed!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n	<div class=\"text\">\n		\n	</div>\n</div>";
+    + "></td>\n			</tr>\n			<tr>\n				<th>Job No: </th><td> <input id=\"job_number\" class=\"form-control\" type=\"number\"></td>\n			</tr>\n			<tr>\n				<th>Project: </th><td> <input id=\"location\" class=\"form-control\" type=\"text\"></td>\n			</tr>\n			<tr>\n				<span><th>Date Required:</th><td> <input readonly=\"true\" id=\"date_req\" class=\"form-control\" type=\"text\"></td></span>\n			</tr>\n		</table>\n		<div class=\"hint\">Item Available After: "
+    + alias3(((helper = (helper = helpers.date_col || (depth0 != null ? depth0.date_col : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"date_col","hash":{},"data":data}) : helper)))
+    + "</div>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Order Confirmed!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Your order has been confirmed!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n	<div class=\"text\">\n		\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":79}],37:[function(require,module,exports){
