@@ -1265,7 +1265,8 @@ Order = Marionette.ItemView.extend({
 			    setTimeout(function(){
 					self.$el.find('.error').fadeOut();
 				}, 3000);
-				return false;
+				return false;ƒ
+
 			}
 			else{
 				if((key+1) === fieldsToValidate && errors === false){
@@ -1328,8 +1329,8 @@ Order = Marionette.ItemView.extend({
 
 			order.save().done(function(response){
 				console.log(response);
-			}).error(function(err){
-				console.log(error);
+			}).fail(function(err){
+				console.log(err);
 			})
 			
 			_this.$el.find($('.confirmation')).show();
