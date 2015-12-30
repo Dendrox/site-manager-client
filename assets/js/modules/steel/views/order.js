@@ -79,7 +79,7 @@ Order = Marionette.ItemView.extend({
 					var options = {
 						extension    : 'order-steel',
 						ordered_by   : window.App.instance.get('user').get('username'),
-						date_ordered : moment().toDate(),
+						date_ordered : moment().valueOf(),
 						quantity     : quantity_ordered,
 						job_number   : parseInt(self.$el.find('#job_number').val()),
 						location     : self.$el.find('#location').val(),

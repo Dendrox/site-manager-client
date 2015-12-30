@@ -60,6 +60,9 @@ List = Marionette.CollectionView.extend({
 
 		this.render(this.collection)
 	},
+	viewComparator : function(){
+
+	},
 	destroy : function(){
 		console.log('close')
 		$('#filter-view').hide();

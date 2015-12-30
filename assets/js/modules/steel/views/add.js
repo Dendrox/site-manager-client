@@ -26,6 +26,7 @@ Add = Marionette.ItemView.extend({
 		
 		this.collection = window.App.instance.get('steelTypes');
 		this.formValid = false;
+		console.log(moment().valueOf());
 		
 	},
 	onShow : function(){
@@ -104,7 +105,7 @@ Add = Marionette.ItemView.extend({
 
 		// Steel Log Data
 		options.added_by = window.App.instance.get('user').get('username');
-		options.date_added = moment().toDate();
+		options.date_added = moment().valueOf();
 
 		var _this = this;
 

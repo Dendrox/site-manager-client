@@ -16,10 +16,6 @@ Model = Backbone.Model.extend({
 	initialize : function(){
 		console.log('user initialized');
 	},
-	// fetch : function(){
-	// 	this.get('incoming').fetch();
-	// 	this.get('outgoing').fetch();
-	// },
 	loggedIn : function(){
 	   this.fetch()
 	},

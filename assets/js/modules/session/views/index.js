@@ -25,11 +25,11 @@ Index = Marionette.ItemView.extend({
 		console.log('validating username');
 	},
 	authenticateUser : function(){
-		console.log('authenticateUser')
 		var data = {
 			username : 'rody.kirwan@gmail.com',//$('#username').val(),
 			password : 'site1'//$('#password').val()
 		}
+		var params = {};
 		var self = this;
 		this.model.fetch({data:data})
 		.done(function(response){
@@ -44,6 +44,7 @@ Index = Marionette.ItemView.extend({
 			}
 			else{
 				window.sessionStorage.token = response.token;
+				console.log(response)
 				Backbone.history.navigate('home', {trigger : true});
 			}
 		})

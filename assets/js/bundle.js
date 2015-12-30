@@ -564,11 +564,11 @@ Index = Marionette.ItemView.extend({
 		console.log('validating username');
 	},
 	authenticateUser : function(){
-		console.log('authenticateUser')
 		var data = {
 			username : 'rody.kirwan@gmail.com',//$('#username').val(),
 			password : 'site1'//$('#password').val()
 		}
+		var params = {};
 		var self = this;
 		this.model.fetch({data:data})
 		.done(function(response){
@@ -583,6 +583,7 @@ Index = Marionette.ItemView.extend({
 			}
 			else{
 				window.sessionStorage.token = response.token;
+				console.log(response)
 				Backbone.history.navigate('home', {trigger : true});
 			}
 		})
@@ -611,6 +612,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
 },{"hbsfy/runtime":79}],21:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
+	moment = require('moment'),
 	Model = require('./model');
 	Backbone.$ = $;
 
@@ -619,11 +621,14 @@ Collection = Backbone.Collection.extend({
 	url : function(){
 		return window.App.apiURL + '/steel_items?token=' + window.sessionStorage.token
 		//add token to URL: ?token=' + window.App.data.token
-	}
+	},
+	comparator: function(item){
+		return item.get('date_added') == moment( item.get('date_added') ).unix();
+	},
 });
 
 module.exports = Collection;
-},{"./model":23,"backbone":59,"jquery":81}],22:[function(require,module,exports){
+},{"./model":23,"backbone":59,"jquery":81,"moment":82}],22:[function(require,module,exports){
 var $             = require('jquery'),
 	_             = require('underscore'),
 	Marionette    = require('backbone.marionette'),
@@ -825,6 +830,7 @@ Add = Marionette.ItemView.extend({
 		
 		this.collection = window.App.instance.get('steelTypes');
 		this.formValid = false;
+		console.log(moment().valueOf());
 		
 	},
 	onShow : function(){
@@ -903,7 +909,7 @@ Add = Marionette.ItemView.extend({
 
 		// Steel Log Data
 		options.added_by = window.App.instance.get('user').get('username');
-		options.date_added = moment().toDate();
+		options.date_added = moment().valueOf();
 
 		var _this = this;
 
@@ -1146,6 +1152,9 @@ List = Marionette.CollectionView.extend({
 
 		this.render(this.collection)
 	},
+	viewComparator : function(){
+
+	},
 	destroy : function(){
 		console.log('close')
 		$('#filter-view').hide();
@@ -1286,7 +1295,7 @@ Order = Marionette.ItemView.extend({
 					var options = {
 						extension    : 'order-steel',
 						ordered_by   : window.App.instance.get('user').get('username'),
-						date_ordered : moment().toDate(),
+						date_ordered : moment().valueOf(),
 						quantity     : quantity_ordered,
 						job_number   : parseInt(self.$el.find('#job_number').val()),
 						location     : self.$el.find('#location').val(),
@@ -1668,10 +1677,6 @@ Model = Backbone.Model.extend({
 	initialize : function(){
 		console.log('user initialized');
 	},
-	// fetch : function(){
-	// 	this.get('incoming').fetch();
-	// 	this.get('outgoing').fetch();
-	// },
 	loggedIn : function(){
 	   this.fetch()
 	},
