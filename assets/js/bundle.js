@@ -9,7 +9,7 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
-App.apiURL =  'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
+App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
 //'https://intense-thicket-2598.herokuapp.com/api';
 
 
@@ -891,7 +891,7 @@ Add = Marionette.ItemView.extend({
 	selectDate : function(){
 		this.$el.find('#date_col').datepicker({ 
 			minDate: 0,
-			dateFormat: 'dd/mm/yy'
+			dateFormat: 'dd-mm-yy'
 		});
 	},
 	validateForm: function(){
@@ -909,7 +909,7 @@ Add = Marionette.ItemView.extend({
 
 		// Steel Log Data
 		options.added_by = window.App.instance.get('user').get('username');
-		options.date_added = moment().valueOf();
+		options.date_added = moment().format("DD-MM-YYYY HH:MM").toString();
 
 		var _this = this;
 
@@ -1259,7 +1259,7 @@ Order = Marionette.ItemView.extend({
 
 		this.$el.find('#date_req').datepicker({ 
 			minDate: dateAvailable,
-			dateFormat: 'dd/mm/yy'
+			dateFormat: 'dd-mm-yy'
 		});
 		if( moment(dateAvailable).isAfter(now) ){
 			this.$el.find('div.hint').fadeIn();
@@ -1295,10 +1295,10 @@ Order = Marionette.ItemView.extend({
 					var options = {
 						extension    : 'order-steel',
 						ordered_by   : window.App.instance.get('user').get('username'),
-						date_ordered : moment().valueOf(),
+						date_ordered : moment().format("DD-MM-YYYY HH:MM").toString(),
 						quantity     : quantity_ordered,
 						job_number   : parseInt(self.$el.find('#job_number').val()),
-						location     : self.$el.find('#location').val(),
+						project      : self.$el.find('#project').val(),
 						date_req     : self.$el.find('#date_req').val()
 					};
 
@@ -1531,7 +1531,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + alias3(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)))
     + "</td>\n			</tr>\n			<tr>\n				<th>Quantity: </th><td> <input id=\"order_quantity\" class=\"form-control\" type=\"number\" value="
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "></td>\n			</tr>\n			<tr>\n				<th>Job No: </th><td> <input id=\"job_number\" class=\"form-control\" type=\"number\"></td>\n			</tr>\n			<tr>\n				<th>Project: </th><td> <input id=\"location\" class=\"form-control\" type=\"text\"></td>\n			</tr>\n			<tr>\n				<span><th>Date Required:</th><td> <input readonly=\"true\" id=\"date_req\" class=\"form-control\" type=\"text\"></td></span>\n			</tr>\n		</table>\n		<div class=\"hint\">Item Available After: "
+    + "></td>\n			</tr>\n			<tr>\n				<th>Job No: </th><td> <input id=\"job_number\" class=\"form-control\" type=\"number\"></td>\n			</tr>\n			<tr>\n				<th>Project: </th><td> <input id=\"project\" class=\"form-control\" type=\"text\"></td>\n			</tr>\n			<tr>\n				<span><th>Date Required:</th><td> <input readonly=\"true\" id=\"date_req\" class=\"form-control\" type=\"text\"></td></span>\n			</tr>\n		</table>\n		<div class=\"hint\">Item Available After: "
     + alias3(((helper = (helper = helpers.date_col || (depth0 != null ? depth0.date_col : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"date_col","hash":{},"data":data}) : helper)))
     + "</div>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Order Confirmed!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Your order has been confirmed!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n	<div class=\"text\">\n		\n	</div>\n</div>";
 },"useData":true});

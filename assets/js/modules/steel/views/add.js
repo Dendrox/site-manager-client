@@ -87,7 +87,7 @@ Add = Marionette.ItemView.extend({
 	selectDate : function(){
 		this.$el.find('#date_col').datepicker({ 
 			minDate: 0,
-			dateFormat: 'dd/mm/yy'
+			dateFormat: 'dd-mm-yy'
 		});
 	},
 	validateForm: function(){
@@ -105,7 +105,7 @@ Add = Marionette.ItemView.extend({
 
 		// Steel Log Data
 		options.added_by = window.App.instance.get('user').get('username');
-		options.date_added = moment().valueOf();
+		options.date_added = moment().format("DD-MM-YYYY HH:MM").toString();
 
 		var _this = this;
 

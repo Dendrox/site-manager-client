@@ -43,7 +43,7 @@ Order = Marionette.ItemView.extend({
 
 		this.$el.find('#date_req').datepicker({ 
 			minDate: dateAvailable,
-			dateFormat: 'dd/mm/yy'
+			dateFormat: 'dd-mm-yy'
 		});
 		if( moment(dateAvailable).isAfter(now) ){
 			this.$el.find('div.hint').fadeIn();
@@ -79,10 +79,10 @@ Order = Marionette.ItemView.extend({
 					var options = {
 						extension    : 'order-steel',
 						ordered_by   : window.App.instance.get('user').get('username'),
-						date_ordered : moment().valueOf(),
+						date_ordered : moment().format("DD-MM-YYYY HH:MM").toString(),
 						quantity     : quantity_ordered,
 						job_number   : parseInt(self.$el.find('#job_number').val()),
-						location     : self.$el.find('#location').val(),
+						project      : self.$el.find('#project').val(),
 						date_req     : self.$el.find('#date_req').val()
 					};
 
