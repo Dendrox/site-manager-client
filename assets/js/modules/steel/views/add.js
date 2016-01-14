@@ -3,7 +3,8 @@ var $ = require('jquery'),
 	Backbone   = require('backbone'),
     Template   = require('./templates/add.hbs'),
     ItemClass  = require('../../steel_class/collection'),
-    Model      = require('../model');
+    Model      = require('../model'),
+    Sites      = require('../../sites/module');
 
 require('jquery-ui');
 
@@ -20,12 +21,22 @@ Add = Marionette.ItemView.extend({
 		'click button#view' : 'viewOutgoing',
 		'click button#home' : 'goHome',
 		'change select.steel_type' : 'renderSections',
-		'focus input#date_col' : 'selectDate'
+		'change select#job_number' : 'renderProject',
+		'focus input#date_col' : 'selectDate',
+		'click div.add_project' : 'addProjectForm'
+	},
+	addProjectForm: function(e){
+		$(e.currentTarget).hide();
+		this.$el.find('#job_number').hide();
+		this.$el.find('#job_number2').show();
+		this.$el.find('#project').attr("readonly", false);
+		this.jobExists = false;
 	},
 	initialize : function(){
 		
 		this.collection = window.App.instance.get('steelTypes');
 		this.formValid = false;
+		this.jobExists = true;
 		console.log(moment().valueOf());
 		
 	},
@@ -42,6 +53,24 @@ Add = Marionette.ItemView.extend({
 			console.log(self.$el.find('.steel_type'))
 			self.$el.find('.steel_type').append('<option value="'+id+'">'+type+'</option>');
 		}, this);
+
+		window.App.instance.get('sites').fetch().done(function(response){
+			$.each(response, function(i, val){
+				self.$el.find('#job_number').append('<option project="'+val.project+'" value="'+val.job_number+'">'+val.job_number+'</option>');
+			})
+		});
+	},
+	renderProject: function(e){
+		e.preventDefault();
+
+		var collection = window.App.instance.get('sites');
+
+		var project = _.find(collection.models, function(site){
+			return site.get('job_number') == $(e.currentTarget).val()
+		});
+
+		this.$el.find('#project').val(project.get('project'))
+
 	},
 	renderSections : function(e){
 		this.$el.find('.steel_section').empty().append('<option value="">Please select</option>');
@@ -99,7 +128,10 @@ Add = Marionette.ItemView.extend({
 		options.length = this.$el.find('#length ').val();
 		options.quantity = this.$el.find('#quantity').val();
 		options.project  = this.$el.find('#project').val();
-		options.job_number = this.$el.find('#job_number').val();
+		if(this.jobExists)
+			options.job_number = this.$el.find('#job_number option:selected').text()
+		else
+			options.job_number = this.$el.find('#job_number2').val();
 		options.date_col   = this.$el.find('#date_col').val();
 		options.comments = this.$el.find('#comments').val();
 

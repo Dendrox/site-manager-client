@@ -259,9 +259,54 @@ body, html {
 					color: #165207;
 				}
 
+				div.project_form{
+					position: relative;
+					width: 100%;
+
+					#job_number{
+						width: 85%;
+						position: absolute;
+						top: 25px;
+						left: 0;
+					}
+
+					#job_number2{
+						display: none;
+						width: 100%;
+						position: absolute;
+						top: 25px;
+						left: 0;
+					}
+
+					#project_label{
+						margin-top: 60px;
+						margin-left: -50px;
+					}
+
+					div.add_project{
+						position: absolute;
+					    top: 30px;
+					    height: 35px;
+					    width: 35px;
+					    right: 5px;
+					    background-color: white;
+					    border: none;
+					    margin-top: -7px;
+
+						span{
+							font-size: 35px;
+							color: #267712;
+						}
+					}
+				}
+
 				input, select, textarea{
 					width: 100%;
 					margin-bottom: 20px;
+
+					&#job_number{
+						width: 80%;
+					}
 				}
 
 				.confirm{
@@ -374,6 +419,30 @@ body, html {
 	    			th{
 	    				width: 40%;
 	    			}
+	    			select#job_number{
+	    				width: 78%;
+	    				display: inline-block;
+	    			}
+	    			input#job_number2{
+	    				width: 100%;
+	    				display: inline-block;
+	    				display: none;
+	    			}
+	    			div.add_project{
+					    height: 35px;
+					    width: 35px;
+					    // right: 5px;
+					    float: right;
+					    display: inline-block;
+					    background-color: white;
+					    border: none;
+					    margin-top: 0;
+
+						span{
+							font-size: 35px;
+							color: #267712;
+						}
+					}
 	    		}
     		}
     		div.hint{

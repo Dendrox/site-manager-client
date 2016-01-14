@@ -20,8 +20,17 @@ Order = Marionette.ItemView.extend({
 		'click button#home' : 'goHome',
 		'focus input#date_req' : 'selectDate',
 		'focusout input#date_req' : 'hideDateHint',
-		'input input#date_req' : 'validateDate'
+		'input input#date_req' : 'validateDate',
+		'change select#job_number' : 'renderProject',
+		'click div.add_project' : 'addProjectForm'
 		//'change input#order_quantity' : 'validateQuantity'
+	},
+	addProjectForm: function(e){
+		$(e.currentTarget).hide();
+		this.$el.find('#job_number').hide();
+		this.$el.find('#job_number2').show();
+		this.$el.find('#project').val('').attr("readonly", false);
+		this.jobExists = false;
 	},
 	hideDateHint : function(){
 		this.$el.find('div.hint').fadeOut();
@@ -35,7 +44,30 @@ Order = Marionette.ItemView.extend({
 		})
 		.fail(function(response){
 			console.log(response)
-		})
+		});
+		this.jobExists = true;
+	},
+	onShow: function(){
+		console.log('ordee form');
+		var self = this;
+		window.App.instance.get('sites').fetch().done(function(response){
+			$.each(response, function(i, val){
+				self.$el.find('#job_number').append('<option project="'+val.project+'" value="'+val.job_number+'">'+val.job_number+'</option>');
+			})
+		});
+	},
+	renderProject: function(e){
+		e.preventDefault();
+
+		var collection = window.App.instance.get('sites');
+
+		var project = _.find(collection.models, function(site){
+			return site.get('job_number') == $(e.currentTarget).val()
+		});
+
+		this.$el.find('#project').val(project.get('project'))
+		this.$el.find('#job_number2').val(parseInt($(e.currentTarget).val()))
+
 	},
 	selectDate : function(){
 		var now = moment()._d;
@@ -81,7 +113,7 @@ Order = Marionette.ItemView.extend({
 						ordered_by   : window.App.instance.get('user').get('username'),
 						date_ordered : moment().format("DD-MM-YYYY HH:MM").toString(),
 						quantity     : quantity_ordered,
-						job_number   : parseInt(self.$el.find('#job_number').val()),
+						job_number   : parseInt(self.$el.find('#job_number2').val()),
 						project      : self.$el.find('#project').val(),
 						date_req     : self.$el.find('#date_req').val()
 					};

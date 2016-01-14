@@ -15,10 +15,19 @@
 				<th>Quantity: </th><td> <input id="order_quantity" class="form-control" type="number" value={{quantity}}></td>
 			</tr>
 			<tr>
-				<th>Job No: </th><td> <input id="job_number" class="form-control" type="number"></td>
+				<th>Job No: </th>
+				<td> 
+					<select id="job_number" class="form-control" type="number">
+						<option value="">Please Select</option>
+					</select>
+					<input id="job_number2" class="form-control" type="number">
+					<div class="add_project">
+						<span class="icon glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+					</div>
+				</td>
 			</tr>
 			<tr>
-				<th>Project: </th><td> <input id="project" class="form-control" type="text"></td>
+				<th>Project: </th><td> <input id="project" class="form-control" type="text" readonly></td>
 			</tr>
 			<tr>
 				<span><th>Date Required:</th><td> <input readonly="true" id="date_req" class="form-control" type="text"></td></span>

@@ -22,11 +22,21 @@
 		<label for="length">Quantity</label>
 		<input class="form-control" id="quantity" name="quantity" type="number"></input>
 
-		<label for="project">Project Name</label>
-		<input class="form-control" id="project" name="project" type="text"></input>
-		<span>
-		<label for="job_number">Job No.</label><br>
-		<input class="form-control half_width" id="job_number" name="job_number" type="number"></input>
+		<div class="project_form">
+			<label for="job_number">Job No.</label><br>
+			<select class="form-control half_width" id="job_number" name="job_number" type="number">
+				<option value="">Please select</option>
+			</select>
+			<input class="form-control half_width" id="job_number2" name="job_number" type="number"></input>
+			<div class="add_project"><span class="icon glyphicon glyphicon-plus-sign" aria-hidden="true"></span></div>
+
+			<label id="project_label" for="project">Project Name</label>
+			<input class="form-control" id="project" name="project" type="text" readonly></input>
+		</div>
+		
+
+		{{!-- <label for="job_number">Job No.</label><br>
+		<input class="form-control half_width" id="job_number" name="job_number" type="number"></input> --}}
 
 		<label for="date_col">Collection Date</label><br>
 		<input readonly="true" id="date_col" class="form-control half_width" type="text"></input>
