@@ -17,7 +17,7 @@ var Controller = Marionette.Controller.extend({
     	this.renderView(view);
     },
     navHome : function(){
-    	console.log('navHome');
+    	$('#page_title').html('Options');
         var app_model = window.App.instance;
     	var view = new Module.Views.Index({model: app_model});
         var header = new HeaderView({model : window.App.instance.get('user')});
@@ -26,10 +26,12 @@ var Controller = Marionette.Controller.extend({
     },
     addMaterials : function(){
         console.log('addMaterials');
+        $('#page_title').html('Add Materials');
         var view = new Module.Views.Add();
         this.renderView(view);
     },
     searchMaterials : function(){
+        $('#page_title').html('Search Materials');
         console.log('search materials');
         var view = new Module.Views.Search();
         this.renderView(view);

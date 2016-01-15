@@ -8,7 +8,7 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
-App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
+App.apiURL = 'http://localhost:8080/api';
 //'https://intense-thicket-2598.herokuapp.com/api';
 
 

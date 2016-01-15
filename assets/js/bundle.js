@@ -9,7 +9,7 @@ App = new Marionette.Application();
 
 App.views = {};
 App.data  = {};
-App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
+App.apiURL = 'http://localhost:8080/api';
 //'https://intense-thicket-2598.herokuapp.com/api';
 
 
@@ -231,7 +231,7 @@ var Controller = Marionette.Controller.extend({
     	this.renderView(view);
     },
     navHome : function(){
-    	console.log('navHome');
+    	$('#page_title').html('Options');
         var app_model = window.App.instance;
     	var view = new Module.Views.Index({model: app_model});
         var header = new HeaderView({model : window.App.instance.get('user')});
@@ -240,10 +240,12 @@ var Controller = Marionette.Controller.extend({
     },
     addMaterials : function(){
         console.log('addMaterials');
+        $('#page_title').html('Add Materials');
         var view = new Module.Views.Add();
         this.renderView(view);
     },
     searchMaterials : function(){
+        $('#page_title').html('Search Materials');
         console.log('search materials');
         var view = new Module.Views.Search();
         this.renderView(view);
@@ -364,7 +366,7 @@ Add = Marionette.ItemView.extend({
 	events : {
 		'click div#add_steel' : 'addSteel'
 	},
-	initialize : function(){
+	initialize : function(){		
 		console.log('modular add_items')
 	},
 	addSteel : function(){
@@ -691,16 +693,18 @@ var Controller = Marionette.Controller.extend({
         console.log('steel controller : init');
     },
     add : function(){
+        $('#page_title').html('Add Steel');
         var view = new Module.Views.Add();
         this.renderView(view);
     },
     search : function(){
+        $('#page_title').html('Search Steel');
         var collection = new Module.Collection();
         var view = new Module.Views.List({collection : collection});
         this.renderView(view);
     },
     order : function(id){
-        console.log('modular: order Steel view')
+        $('#page_title').html('Order');
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
@@ -709,6 +713,7 @@ var Controller = Marionette.Controller.extend({
         this.renderView(view);
     },
     edit : function(id){
+        $('#page_title').html('Edit');
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
@@ -1647,7 +1652,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + alias3(((helper = (helper = helpers.length || (depth0 != null ? depth0.length : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"length","hash":{},"data":data}) : helper)))
     + "</td>\n			</tr>\n			<tr>\n				<th>Quantity: </th><td> <input id=\"order_quantity\" class=\"form-control\" type=\"number\" value="
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "></td>\n			</tr>\n			<tr>\n				<th>Job No: </th>\n				<td> \n					<select id=\"job_number\" class=\"form-control\" type=\"number\">\n						<option value=\"\">Please Select</option>\n					</select>\n					<input id=\"job_number2\" class=\"form-control\" type=\"number\">\n					<div class=\"add_project\">\n						<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n					</div>\n				</td>\n			</tr>\n			<tr>\n				<th>Project: </th><td> <input id=\"project\" class=\"form-control\" type=\"text\" readonly></td>\n			</tr>\n			<tr>\n				<span><th>Date Required:</th><td> <input readonly=\"true\" id=\"date_req\" class=\"form-control\" type=\"text\"></td></span>\n			</tr>\n		</table>\n		<div class=\"hint\">Item Available After: "
+    + "></td>\n			</tr>\n			<tr>\n				<th>Job No: </th>\n				<td> \n					<select id=\"job_number\" class=\"form-control\" type=\"number\">\n						<option value=\"\">Select</option>\n					</select>\n					<input id=\"job_number2\" class=\"form-control\" type=\"number\">\n					<div class=\"add_project\">\n						<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n					</div>\n				</td>\n			</tr>\n			<tr>\n				<th>Project: </th><td> <input id=\"project\" class=\"form-control\" type=\"text\" readonly></td>\n			</tr>\n			<tr>\n				<span><th>Date Required:</th><td> <input readonly=\"true\" id=\"date_req\" class=\"form-control\" type=\"text\"></td></span>\n			</tr>\n		</table>\n		<div class=\"hint\">Item Available After: "
     + alias3(((helper = (helper = helpers.date_col || (depth0 != null ? depth0.date_col : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"date_col","hash":{},"data":data}) : helper)))
     + "</div>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Order Confirmed!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Your order has been confirmed!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n	<div class=\"text\">\n		\n	</div>\n</div>";
 },"useData":true});
@@ -1748,15 +1753,18 @@ var Controller = Marionette.Controller.extend({
         console.log('session-controller : init')
     },
     viewTransactions : function(){
+        $('#page_title').html('Account');
         var view = new Module.Views.Transactions();
         this.renderView(view) 
     },
     viewIncoming : function(){
+        $('#page_title').html('Incoming');
         var collection = window.App.instance.get('user').get('incoming');
         var view = new Module.Views.Incoming({collection : collection});
         this.renderView(view);
     },
     viewOutgoing : function(){
+        $('#page_title').html('Outgoing');
         var collection = window.App.instance.get('user').get('outgoing');
         var view = new Module.Views.Outgoing({collection : collection});
         this.renderView(view);
@@ -2063,7 +2071,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"header-container\">\n	<button id=\"menu\"><span class=\"icon glyphicon glyphicon-user\" aria-hidden=\"true\"></span></button>\n	<button id=\"home\"><span class=\"icon glyphicon glyphicon-home\" aria-hidden=\"true\"></span></button>\n	<button id=\"back\"><span class=\"icon glyphicon glyphicon-chevron-left\" aria-hidden=\"true\"></span></button>\n	<div class=\"mc\" id=\"menu-container\">\n		<ul>\n			<li class=\"menu-option\" id=\"account\">My Account\n				<span class=\"icon glyphicon glyphicon-folder-open\" aria-hidden=\"true\">\n			</li>\n			<li class=\"menu-option\" id=\"logout\">Log Out\n			<span class=\"icon glyphicon glyphicon-log-out\" aria-hidden=\"true\">\n			</li>\n		</ul>\n	</div>\n</div>	";
+    return "<div class=\"header-container\">\n	<button id=\"menu\"><span class=\"icon glyphicon glyphicon-user\" aria-hidden=\"true\"></span></button>\n	<button id=\"home\"><span class=\"icon glyphicon glyphicon-home\" aria-hidden=\"true\"></span></button>\n	<div id=\"page_title\">Options</div>\n	<div class=\"mc\" id=\"menu-container\">\n		<ul>\n			<li class=\"menu-option\" id=\"account\">My Account\n				<span class=\"icon glyphicon glyphicon-folder-open\" aria-hidden=\"true\">\n			</li>\n			<li class=\"menu-option\" id=\"logout\">Log Out\n			<span class=\"icon glyphicon glyphicon-log-out\" aria-hidden=\"true\">\n			</li>\n		</ul>\n	</div>\n</div>	";
 },"useData":true});
 
 },{"hbsfy/runtime":82}],54:[function(require,module,exports){

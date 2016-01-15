@@ -11,7 +11,7 @@ Add = Marionette.ItemView.extend({
 	events : {
 		'click div#add_steel' : 'addSteel'
 	},
-	initialize : function(){
+	initialize : function(){		
 		console.log('modular add_items')
 	},
 	addSteel : function(){

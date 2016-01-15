@@ -8,16 +8,18 @@ var Controller = Marionette.Controller.extend({
         console.log('steel controller : init');
     },
     add : function(){
+        $('#page_title').html('Add Steel');
         var view = new Module.Views.Add();
         this.renderView(view);
     },
     search : function(){
+        $('#page_title').html('Search Steel');
         var collection = new Module.Collection();
         var view = new Module.Views.List({collection : collection});
         this.renderView(view);
     },
     order : function(id){
-        console.log('modular: order Steel view')
+        $('#page_title').html('Order');
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
@@ -26,6 +28,7 @@ var Controller = Marionette.Controller.extend({
         this.renderView(view);
     },
     edit : function(id){
+        $('#page_title').html('Edit');
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
