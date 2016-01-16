@@ -1,18 +1,16 @@
-var $        = require('jquery'),
-	Backbone = require('backbone'),
-	User = require('../user/module'),
-	SteelTypes = require('../steel_class/module'),
-	Session = require('../session/module'),
-	Sites = require('../sites/module');
+var $          = require('jquery'),
+	Backbone   = require('backbone'),
+	User       = require('../user/module'),
+	SteelTypes = require('../steel_class/module')
+	Sites      = require('../sites/module');
 
 Backbone.$ = $;
 
 Model = Backbone.Model.extend({
 	defaults : {
-		user : new User.Model(),
+		user       : new User.Model(),
 		steelTypes : new SteelTypes.Collection(),
-		sites : new Sites.Collection(),
-		session : Session
+		sites      : new Sites.Collection()
 	},
 	initialize : function(){
 		var _this = this;

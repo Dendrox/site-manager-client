@@ -6,14 +6,14 @@ var $        = require('jquery'),
 Incoming = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_outs/users?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_outs/users?token=' + window.sessionStorage.token;
 	}
 });
 
 Outgoing = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_items/users?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_items/users?token=' + window.sessionStorage.token;
 	}
 });
 

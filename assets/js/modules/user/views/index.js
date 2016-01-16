@@ -14,11 +14,10 @@ Index = Marionette.ItemView.extend({
 		'click button#home' : 'navHome',
 		'click button#back' : 'goBack',
 		'click li#account'  : 'openAccount',
-		'click li#logout'  : 'logout'
+		'click li#logout'   : 'logout'
 	},
 	initialize : function(){
 		var self = this;
-		console.log(this.$el)
 		this.$el.addClass('background');
 
 		$(document).on('click', function(e) {
@@ -31,7 +30,7 @@ Index = Marionette.ItemView.extend({
 		e.preventDefault();
 		
 		this.$el.find($('#menu-container')).css({'display' : 'block'});
-		e.stopPropagation()
+		e.stopPropagation();
 	},
 	openAccount : function(){
 		Backbone.history.navigate('transactions', {trigger : true});

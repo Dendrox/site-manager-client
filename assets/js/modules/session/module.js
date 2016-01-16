@@ -6,13 +6,8 @@ var $        = require('jquery'),
 
 Backbone.$ = $;
 
-Module = {
+module.exports = {
 	Model  : Model,
 	View   : View,
-	Router : Router,
-}
-
-
-new Router();
-
-module.exports = Module;
+	Router : Router
+};

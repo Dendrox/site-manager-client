@@ -1,14 +1,17 @@
-var $ = require('jquery'),
-	_ = require('underscore'),
+var $          = require('jquery'),
+	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
-	LoginView = require('./views/index');
+    Session    = require('./model'),
+	LoginView  = require('./views/index');
 
 var Controller = Marionette.Controller.extend({
     initialize : function(){
-        console.log('session-controller : init')
+        console.log('session-controller : init');
     },
     login : function() {
-    	var view = new LoginView();
+        console.log('login');
+        var model = new Session();
+    	var view  = new LoginView({model : model});
     	this.renderView(view);
     },
     renderView: function(view) {

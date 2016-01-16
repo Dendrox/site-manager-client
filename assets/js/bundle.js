@@ -1,53 +1,53 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.App = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var $ = require('jquery'),
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone');
+	Backbone   = require('backbone');
 
 Backbone.$ = $;
 
+// Set Remote and Local URLs
+var remote_url = 'https://intense-thicket-2598.herokuapp.com/api';
+var local_url  = 'http://localhost:8080/api';
+
 App = new Marionette.Application();
 
-App.views = {};
-App.data  = {};
-App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
-//'https://intense-thicket-2598.herokuapp.com/api';
+// Required Modules and files for App Initialization
+var Application   = require('./modules/application/module'),
+	AppRouter     = require('./modules/application/router'),
+	SteelRouter   = require('./modules/steel/router'),
+	UserRouter    = require('./modules/user/router'),
+	SessionRouter = require('./modules/session/router');
 
-
-// NOTE: This needs to be moved maybe to a boot module
-var Controller   = require('./controller'),
-	ExtendRouter = require('./views/router_extend'),
-	Application  = require('./modules/application/module'),
-	AppRouter    = require('./modules/application/router'),
-	SteelRouter  = require('./modules/steel/router'),
-	UserRouter   = require('./modules/user/router'),
-	User         = require('./models/user');
-
+// Setup Application
+App.views    = {};
+App.data     = {};
+App.apiURL   = remote_url;
 App.instance = new Application.Model();
 
 // Add Viewing Regions
 App.addRegions({
-	mainRegion : '#main-region',
-	headerRegion : '#header-region',
-	filterRegion : '#filter-region',
+	mainRegion    : '#main-region',
+	headerRegion  : '#header-region',
+	filterRegion  : '#filter-region',
 	loadingRegion : '#loading-region'
 });
 
+// Return user to login screen if no session token exists
+if(window.sessionStorage.token)
+    window.location.href = '/#home'
+else
+    window.location.href = '/#login'
 
-if(window.sessionStorage.token){
-    console.log('token exists!')
-    window.location.href = '/#home';
-}
-else{
-    console.log('token no exist')
-    window.location.href = '/#login';
-}
-
+// Start Application
 App.on('start', function() {
+	
+	// Initialise Routers
+	App.router          = new AppRouter();
+	App.router.steel    = new SteelRouter();
+	App.router.user     = new UserRouter();
+	App.router.sesssion = new SessionRouter();
 
-	App.router = new AppRouter();
-	App.router.steel = new SteelRouter();
-	App.router.user = new UserRouter();
-
+	// Note: Needs to be removed
 	$.ajaxSetup({
 	    beforeSend:function(){
 	        // show gif here, eg:
@@ -63,161 +63,15 @@ App.on('start', function() {
 });
 
 App.start();
+
 module.exports = App;
-},{"./controller":2,"./models/user":3,"./modules/application/module":6,"./modules/application/router":7,"./modules/steel/router":28,"./modules/user/router":47,"./views/router_extend":57,"backbone":62,"backbone.marionette":58,"jquery":84}],2:[function(require,module,exports){
-// var $ = require('jquery'),
-// 	_ = require('underscore'),
-// 	Marionette = require('backbone.marionette'),
-// 	LoginView = require('./views/login'),
-// 	UserView = require('./views/user'),
-//     UsersView = require('./views/users'),
-// 	HeaderView = require('./modules/user/views/index'),
-// 	HomeView = require('./modules/application/views/index'),
-//     AddMaterialsView = require('./modules/application/views/add'),
-//     SearchMaterialsView = require('./modules/application/views/search')
-//     AddSteelView = require('./views/add_steel'),
-//     SteelItems = require('./collections/steel_items'),
-//     Orders = require('./collections/orders'),
-//     SteelPosts = require('./collections/steel_posts'),
-//     SteelTypes = require('./collections/steel_types'),
-//     SteelItem = require('./models/steel_item'),
-//     SteelOrderView = require('./views/steel_order'),
-//     SteelItemsView = require('./views/steel_items'),
-//     AccountView = require('./views/account'),
-//     OrdersView = require('./views/my_orders'),
-//     PostsView = require('./views/my_posts'),
-//     SteelEditView = require('./views/steel_edit'),
-//     FilterView = require('./views/steel_filter');
-
-// var Controller = Marionette.Controller.extend({
-//     initialize : function(){
-        
-//     },
-//     showHeader : function(view){
-//         window.App.headerRegion.show(view);
-//         //this.filterSteel();
-//     },
-//     login : function() {
-//     	window.App.views.loginView = new LoginView();
-//     	var view = window.App.views.loginView;
-//     	this.renderView(view);
-//     },
-//     navHome : function(){
-//     	console.log('navHome');
-//     	var view = new HomeView();
-//         var header = new HeaderView({model : window.App.instance.get('user')});
-//         this.showHeader(header);
-//     	this.renderView(view);
-//     },
-//     addMaterials : function(){
-//         console.log('addMaterials');
-//         var view = new AddMaterialsView();
-//         this.renderView(view);
-//     },
-//     searchMaterials : function(){
-//         console.log('search materials');
-//         var view = new SearchMaterialsView();
-//         this.renderView(view);
-//     },
-//     // addSteel : function(){
-//     //     console.log('AddSteelView');
-//     //     var view = new AddSteelView();
-//     //     this.renderView(view);
-//     // },
-//     // searchSteel : function(){
-//     //     console.log('search Steel view')
-//     //     var steelItems = new SteelItems();
-//     //     var view = new SteelItemsView({collection : steelItems});
-//     //     this.renderView(view);
-//     // },
-//     // filterSteel : function(){
-//     //     var steelType = new SteelType()
-//     //     var view = new FilterView({model : steelType});
-//     //     window.App.filterRegion.show(view);
-//     // },
-//     // orderSteelItem : function(id){
-//     //     console.log('order Steel view')
-//     //     var steelItem = new SteelItem({
-//     //         id : id,
-//     //         extension : 'steel_item'
-//     //     });
-//     //     var view = new SteelOrderView({model : steelItem});
-//     //     this.renderView(view);
-//     // },
-//     // openAccount : function(){
-//     //     var view = new AccountView();
-//     //     this.renderView(view) 
-//     // },
-//     // showOrders : function(){
-//     //     var orders = new Orders();
-//     //     var view = new OrdersView({collection : orders})
-//     //     this.renderView(view);
-//     // },
-//     // showPosts : function(){
-//     //     var posts = new SteelPosts();
-//     //     var view = new PostsView({collection : posts})
-//     //     this.renderView(view);
-//     // },
-//     // editPost : function(id){
-//     //     var steelItem = new SteelItem({
-//     //         id : id,
-//     //         extension : 'steel_item'
-//     //     });
-//     //     var view = new SteelEditView({model : steelItem});
-//     //     this.renderView(view);
-//     // },
-//     renderView: function(view) {
-//         this.destroyCurrentView(view);
-//         window.App.mainRegion.show(view);
-        
-//     },
-//     destroyCurrentView: function(view) {
-//         if (!_.isUndefined(window.App.views.currentView)) {
-//             window.App.views.currentView.destroy();
-//         }
-//         window.App.views.currentView = view;
-//     }
-// });
-
-// module.exports = Controller;
-},{}],3:[function(require,module,exports){
-// var $        = require('jquery'),
-// 	Backbone = require('backbone');
-// 	Backbone.$ = $;
-
-// User = Backbone.Model.extend({
-// 	defaults : {
-// 		username  : '',
-// 		firstname : '',
-// 		lastname  : '',
-// 		phone     : '',
-// 		location  : '',
-// 	},
-// 	initialize : function(){
-// 		console.log('user initialized');
-// 	},
-// 	parse : function(response){
-// 		response.id = response._id;
-// 		return response;
-// 	},
-// 	urlRoot : function(){
-// 		return 'http://localhost:8080/api/user/logged-in?token='+window.sessionStorage.token;
-// 	}
-// });
-
-
-
-// module.exports = User;
-	
-
-
-},{}],4:[function(require,module,exports){
-var $ = require('jquery'),
-	_ = require('underscore'),
+},{"./modules/application/module":4,"./modules/application/router":5,"./modules/session/router":15,"./modules/steel/router":25,"./modules/user/router":44,"backbone":58,"backbone.marionette":54,"jquery":80}],2:[function(require,module,exports){
+var $          = require('jquery'),
+	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
-	LoginView = require('../session/views/index'),
+	LoginView  = require('../session/views/index'),
     HeaderView = require('../user/views/index'),
-    Module = require('./module');
+    Module     = require('./module');
 
 var Controller = Marionette.Controller.extend({
     initialize : function(){
@@ -232,21 +86,23 @@ var Controller = Marionette.Controller.extend({
     },
     navHome : function(){
     	$('#page_title').html('Options');
+
         var app_model = window.App.instance;
-    	var view = new Module.Views.Index({model: app_model});
-        var header = new HeaderView({model : window.App.instance.get('user')});
+    	var view      = new Module.Views.Index({model: app_model});
+        var header    = new HeaderView({model : window.App.instance.get('user')});
+
         this.showHeader(header);
     	this.renderView(view);
     },
     addMaterials : function(){
-        console.log('addMaterials');
         $('#page_title').html('Add Materials');
+
         var view = new Module.Views.Add();
         this.renderView(view);
     },
     searchMaterials : function(){
         $('#page_title').html('Search Materials');
-        console.log('search materials');
+
         var view = new Module.Views.Search();
         this.renderView(view);
     },
@@ -264,22 +120,20 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"../session/views/index":19,"../user/views/index":50,"./module":6,"backbone.marionette":58,"jquery":84,"underscore":86}],5:[function(require,module,exports){
-var $        = require('jquery'),
-	Backbone = require('backbone'),
-	User = require('../user/module'),
-	SteelTypes = require('../steel_class/module'),
-	Session = require('../session/module'),
-	Sites = require('../sites/module');
+},{"../session/views/index":16,"../user/views/index":47,"./module":4,"backbone.marionette":54,"jquery":80,"underscore":82}],3:[function(require,module,exports){
+var $          = require('jquery'),
+	Backbone   = require('backbone'),
+	User       = require('../user/module'),
+	SteelTypes = require('../steel_class/module')
+	Sites      = require('../sites/module');
 
 Backbone.$ = $;
 
 Model = Backbone.Model.extend({
 	defaults : {
-		user : new User.Model(),
+		user       : new User.Model(),
 		steelTypes : new SteelTypes.Collection(),
-		sites : new Sites.Collection(),
-		session : Session
+		sites      : new Sites.Collection()
 	},
 	initialize : function(){
 		var _this = this;
@@ -292,7 +146,7 @@ Model = Backbone.Model.extend({
 });
 
 module.exports = Model;
-},{"../session/module":17,"../sites/module":23,"../steel_class/module":42,"../user/module":46,"backbone":62,"jquery":84}],6:[function(require,module,exports){
+},{"../sites/module":20,"../steel_class/module":39,"../user/module":43,"backbone":58,"jquery":80}],4:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	Model    = require('./model'),
@@ -300,28 +154,26 @@ var $        = require('jquery'),
 
 	Backbone.$ = $;
 
-Module = {
+module.exports = {
 	Model : Model,
 	Views : Views
-}
-
-module.exports = Module;
-},{"./model":5,"./view":8,"backbone":62,"jquery":84}],7:[function(require,module,exports){
-var $ = require('jquery'),
-	Backbone = require('backbone'),
+};
+},{"./model":3,"./view":6,"backbone":58,"jquery":80}],5:[function(require,module,exports){
+var $          = require('jquery'),
+	Backbone   = require('backbone'),
 	Controller = require('./controller');
 
 Backbone.$ = $;
 
 var Router = Backbone.Router.extend({
 	routes : {
-		'home' : 'navHome',
-		'add' : 'addMaterials',
+		'home'   : 'navHome',
+		'add'    : 'addMaterials',
 		'search' : 'searchMaterials'
 	},
 	initialize : function(){
 		this.controller = new Controller();
-		console.log('Router Initialized')
+		console.log('App Router Initialized');
 	},
 	navHome : function(){
 		if(!window.sessionStorage.token)
@@ -344,7 +196,7 @@ var Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{"./controller":4,"backbone":62,"jquery":84}],8:[function(require,module,exports){
+},{"./controller":2,"backbone":58,"jquery":80}],6:[function(require,module,exports){
 var Views = {
 	Index  : require('./views/index'),
 	Add    : require('./views/add'),
@@ -352,17 +204,17 @@ var Views = {
 };
 
 module.exports = Views;
-},{"./views/add":9,"./views/index":10,"./views/search":11}],9:[function(require,module,exports){
-var $ = require('jquery'),
+},{"./views/add":7,"./views/index":8,"./views/search":9}],7:[function(require,module,exports){
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/add.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/add.hbs');
 
 Add = Marionette.ItemView.extend({
-	id : 'material-types-view',
-	tagName : 'div',
+	id        : 'material-types-view',
+	tagName   : 'div',
 	className : 'material-types-el',
-	template : Template,
+	template  : Template,
 	events : {
 		'click div#add_steel' : 'addSteel'
 	},
@@ -376,28 +228,22 @@ Add = Marionette.ItemView.extend({
 });
 
 module.exports = Add;
-},{"./templates/add.hbs":12,"backbone":62,"backbone.marionette":58,"jquery":84}],10:[function(require,module,exports){
-var $ = require('jquery'),
+},{"./templates/add.hbs":10,"backbone":58,"backbone.marionette":54,"jquery":80}],8:[function(require,module,exports){
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/index.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/index.hbs');
 
 Index = Marionette.ItemView.extend({
-	id : 'home-view',
-	tagName : 'div',
+	id        : 'home-view',
+	tagName   : 'div',
 	className : 'home-view',
-	template : Template,
+	template  : Template,
 	events : {
 		'click div#search' : 'searchMaterials',
-		'click div#add' : 'addMaterials'
+		'click div#add'    : 'addMaterials'
 	},
 	initialize : function(){
-		// window.App.instance.get('user').fetch().done(function(response){
-		// 	var user = response;
-		// 	window.App.instance.get('user').get('incoming').fetch({data : $.param({ordered_by : user.username})}).done(function(){
-		// 		window.App.instance.get('user').get('outgoing').fetch({data : $.param({added_by : user.username})});
-		// 	});
-		// });
 		if(window.sessionStorage.token)
 			this.model.get('user').loggedIn();
 	},
@@ -410,17 +256,17 @@ Index = Marionette.ItemView.extend({
 });
 
 module.exports = Index;
-},{"./templates/index.hbs":13,"backbone":62,"backbone.marionette":58,"jquery":84}],11:[function(require,module,exports){
-var $ = require('jquery'),
+},{"./templates/index.hbs":11,"backbone":58,"backbone.marionette":54,"jquery":80}],9:[function(require,module,exports){
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/search.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/search.hbs');
 
 Search = Marionette.ItemView.extend({
-	id : 'material-types-view',
-	tagName : 'div',
+	id        : 'material-types-view',
+	tagName   : 'div',
 	className : 'material-types-el',
-	template : Template,
+	template  : Template,
 	events : {
 		'click div#search_steel' : 'searchSteel'
 	},
@@ -434,39 +280,42 @@ Search = Marionette.ItemView.extend({
 });
 
 module.exports = Search;
-},{"./templates/search.hbs":14,"backbone":62,"backbone.marionette":58,"jquery":84}],12:[function(require,module,exports){
+},{"./templates/search.hbs":12,"backbone":58,"backbone.marionette":54,"jquery":80}],10:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"material_list-container\">\n	<div id=\"add_steel\" class=\"list-item\">\n		<p>Steel</p>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],13:[function(require,module,exports){
+},{"hbsfy/runtime":78}],11:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"home-container\">\n	<div id=\"search\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-search\" aria-hidden=\"true\"></span>\n		<p>Search</p>\n	</div>\n	<div id=\"add\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n		<p>Add</p>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],14:[function(require,module,exports){
+},{"hbsfy/runtime":78}],12:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"material_list-container\">\n	<div id=\"search_steel\" class=\"list-item\">\n		<p>Steel</p>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],15:[function(require,module,exports){
-var $ = require('jquery'),
-	_ = require('underscore'),
+},{"hbsfy/runtime":78}],13:[function(require,module,exports){
+var $          = require('jquery'),
+	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
-	LoginView = require('./views/index');
+    Session    = require('./model'),
+	LoginView  = require('./views/index');
 
 var Controller = Marionette.Controller.extend({
     initialize : function(){
-        console.log('session-controller : init')
+        console.log('session-controller : init');
     },
     login : function() {
-    	var view = new LoginView();
+        console.log('login');
+        var model = new Session();
+    	var view  = new LoginView({model : model});
     	this.renderView(view);
     },
     renderView: function(view) {
@@ -482,7 +331,7 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"./views/index":19,"backbone.marionette":58,"jquery":84,"underscore":86}],16:[function(require,module,exports){
+},{"./model":14,"./views/index":16,"backbone.marionette":54,"jquery":80,"underscore":82}],14:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	Backbone.$ = $;
@@ -497,7 +346,7 @@ Model = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		return window.App.apiURL + '/authenticate' // comment
+		return window.App.apiURL + '/authenticate';
 	}
 });
 
@@ -505,26 +354,7 @@ module.exports = Model;
 	
 
 
-},{"backbone":62,"jquery":84}],17:[function(require,module,exports){
-var $        = require('jquery'),
-	Backbone = require('backbone'),
-	Model    = require('./model'),
-	View     = require('./views/index'),
-	Router   = require('./router');
-
-Backbone.$ = $;
-
-Module = {
-	Model  : Model,
-	View   : View,
-	Router : Router,
-}
-
-
-new Router();
-
-module.exports = Module;
-},{"./model":16,"./router":18,"./views/index":19,"backbone":62,"jquery":84}],18:[function(require,module,exports){
+},{"backbone":58,"jquery":80}],15:[function(require,module,exports){
 var $ 		   = require('jquery'),
 	Backbone   = require('backbone'),
 	Controller = require('./controller');
@@ -536,7 +366,7 @@ Router = Backbone.Router.extend({
 		'login'    : 'login',
 	},
 	initialize : function(){
-		this.controller = new Controller()
+		this.controller = new Controller();
 	},
 	login : function(){
 		this.controller.login();
@@ -545,29 +375,26 @@ Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{"./controller":15,"backbone":62,"jquery":84}],19:[function(require,module,exports){
-var $ = require('jquery'),
+},{"./controller":13,"backbone":58,"jquery":80}],16:[function(require,module,exports){
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-	Session = require('../model'),
-    Template = require('./templates/index.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/index.hbs');
 
 Backbone.$ = $;
 
 Index = Marionette.ItemView.extend({
-	id : 'login-view',
-	tagName : 'div',
+	id        : 'login-view',
+	tagName   : 'div',
 	className : 'login-view',
-	template : Template,
-
+	template  : Template,
 	events : {
-		'input #username' : 'validateUsername',
-		'input #password' : 'validateUsername',
+		'input #username'        : 'validateUsername',
+		'input #password'        : 'validateUsername',
 		'click #submit_password' : 'authenticateUser',
 	},
-
 	initialize : function(){
-		this.model = new Session();
+		console.log('session view');
 	},
 	validateUsername : function(){
 		console.log('validating username');
@@ -576,9 +403,10 @@ Index = Marionette.ItemView.extend({
 		var data = {
 			username : 'rody.kirwan@gmail.com',//$('#username').val(),
 			password : 'site1'//$('#password').val()
-		}
-		var params = {};
+		};
+		
 		var self = this;
+
 		this.model.fetch({data:data})
 		.done(function(response){
 			if(!response.success){
@@ -611,14 +439,14 @@ Index = Marionette.ItemView.extend({
 });
 
 module.exports = Index;
-},{"../model":16,"./templates/index.hbs":20,"backbone":62,"backbone.marionette":58,"jquery":84}],20:[function(require,module,exports){
+},{"./templates/index.hbs":17,"backbone":58,"backbone.marionette":54,"jquery":80}],17:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"login-container\">\n	<div id=\"logo\">\n		<img src=\"assets/img/logo.png\">\n	</div>\n	<div class=\"login-details\">\n		<input id=\"username\" placeholder=\" Username\" type=\"text\"/>\n		<span class=\"errors\"></span>\n		\n		<input id=\"password\" placeholder=\" Password\" type=\"password\"/>\n		<span class=\"errors\"></span>\n\n		<button id=\"submit_password\">Submit</button>\n\n		<span class=\"validate_response\"></span>\n		<div class=\"error\">\n			<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],21:[function(require,module,exports){
+},{"hbsfy/runtime":78}],18:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone')
 	Model = require('./model');
@@ -628,12 +456,11 @@ Collection = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
 		return window.App.apiURL + '/sites';
-		//add token to URL: ?token=' + window.App.data.token
 	}
 });
 
 module.exports = Collection;
-},{"./model":22,"backbone":62,"jquery":84}],22:[function(require,module,exports){
+},{"./model":19,"backbone":58,"jquery":80}],19:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	Backbone.$ = $;
@@ -646,24 +473,21 @@ Model = Backbone.Model.extend({
 		job_number : null
 	},
 	urlRoot : function(){
-		// 'http://localhost:8080/api/add-steel'
 		var url = window.App.apiURL + '/sites';
 		return url;
 	}
 });
 
 module.exports = Model;
-},{"backbone":62,"jquery":84}],23:[function(require,module,exports){
-var Model = require('./model'),
+},{"backbone":58,"jquery":80}],20:[function(require,module,exports){
+var Model      = require('./model'),
 	Collection = require('./collection');
 
-Module = {
+module.exports = {
 	Model  : Model,
 	Collection  : Collection
-}
-
-module.exports = Module;
-},{"./collection":21,"./model":22}],24:[function(require,module,exports){
+};
+},{"./collection":18,"./model":19}],21:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	moment = require('moment'),
@@ -682,7 +506,7 @@ Collection = Backbone.Collection.extend({
 });
 
 module.exports = Collection;
-},{"./model":26,"backbone":62,"jquery":84,"moment":85}],25:[function(require,module,exports){
+},{"./model":23,"backbone":58,"jquery":80,"moment":81}],22:[function(require,module,exports){
 var $             = require('jquery'),
 	_             = require('underscore'),
 	Marionette    = require('backbone.marionette'),
@@ -694,31 +518,40 @@ var Controller = Marionette.Controller.extend({
     },
     add : function(){
         $('#page_title').html('Add Steel');
-        var view = new Module.Views.Add();
+
+        var collection = window.App.instance.get('steelTypes');
+        var view        = new Module.Views.Add({collection : collection});
+
         this.renderView(view);
     },
     search : function(){
         $('#page_title').html('Search Steel');
+
         var collection = new Module.Collection();
-        var view = new Module.Views.List({collection : collection});
+        var view       = new Module.Views.List({collection : collection});
+
         this.renderView(view);
     },
     order : function(id){
         $('#page_title').html('Order');
+
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
         });
-        var view = new Module.Views.Order({model : model});
+        var view  = new Module.Views.Order({model : model});
+
         this.renderView(view);
     },
     edit : function(id){
         $('#page_title').html('Edit');
+
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
         });
-        var view = new Module.Views.Edit({model : model});
+        var view  = new Module.Views.Edit({model : model});
+        
         this.renderView(view);
     },
     renderView: function(view) {
@@ -734,7 +567,7 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"./module":27,"backbone.marionette":58,"jquery":84,"underscore":86}],26:[function(require,module,exports){
+},{"./module":24,"backbone.marionette":54,"jquery":80,"underscore":82}],23:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	Backbone.$ = $;
@@ -778,7 +611,7 @@ Model = Backbone.Model.extend({
 });
 
 module.exports = Model;
-},{"backbone":62,"jquery":84}],27:[function(require,module,exports){
+},{"backbone":58,"jquery":80}],24:[function(require,module,exports){
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
 	Model      = require('./model'),
@@ -796,7 +629,7 @@ module.exports = {
 
 
 
-},{"./collection":24,"./model":26,"./view":29,"backbone":62,"jquery":84}],28:[function(require,module,exports){
+},{"./collection":21,"./model":23,"./view":26,"backbone":58,"jquery":80}],25:[function(require,module,exports){
 var $ 		   = require('jquery'),
 	Backbone   = require('backbone'),
 	Controller = require('./controller'),
@@ -806,11 +639,11 @@ Backbone.$ = $;
 
 Router = Backbone.Router.extend({
 	routes : {
-		'add/steel' : 'add',
+		'add/steel'    : 'add',
 		'search/steel' : 'search',
-		'order/:id' : 'order',
-		'edit/:id' : 'edit',
-		'view/:id' : 'view'
+		'order/:id'    : 'order',
+		'edit/:id'     : 'edit',
+		'view/:id'     : 'view'
 	},
 	initialize : function(){
 		this.controller = new Controller();
@@ -848,7 +681,7 @@ Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{"./controller":25,"./module":27,"backbone":62,"jquery":84}],29:[function(require,module,exports){
+},{"./controller":22,"./module":24,"backbone":58,"jquery":80}],26:[function(require,module,exports){
 var Views = {
 	Add   : require('./views/add'),
 	Edit  : require('./views/edit'),
@@ -858,12 +691,11 @@ var Views = {
 };
 
 module.exports = Views;
-},{"./views/add":30,"./views/edit":31,"./views/item":32,"./views/list":33,"./views/order":34}],30:[function(require,module,exports){
-var $ = require('jquery'),
+},{"./views/add":27,"./views/edit":28,"./views/item":29,"./views/list":30,"./views/order":31}],27:[function(require,module,exports){
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
     Template   = require('./templates/add.hbs'),
-    ItemClass  = require('../../steel_class/collection'),
     Model      = require('../model'),
     Sites      = require('../../sites/module');
 
@@ -872,53 +704,48 @@ require('jquery-ui');
 Backbone.$ = $;
 
 Add = Marionette.ItemView.extend({
-	id : 'add-steel-view',
-	tagName : 'div',
+	id        : 'add-steel-view',
+	tagName   : 'div',
 	className : 'add-steel-el',
-	template : Template,
+	template  : Template,
 	events : {
-		'click input#submit-form' : 'validateForm',
-		'click input#cancel-form' : 'cancelForm',
-		'click button#view' : 'viewOutgoing',
-		'click button#home' : 'goHome',
+		'click input#submit-form'  : 'validateForm',
+		'click input#cancel-form'  : 'cancelForm',
+		'click button#view'        : 'viewOutgoing',
+		'click button#home'        : 'goHome',
 		'change select.steel_type' : 'renderSections',
 		'change select#job_number' : 'renderProject',
-		'focus input#date_col' : 'selectDate',
-		'click div.add_project' : 'addProjectForm'
+		'focus input#date_col'     : 'selectDate',
+		'click div.add_project'    : 'addProjectForm'
 	},
 	addProjectForm: function(e){
 		$(e.currentTarget).hide();
 		this.$el.find('#job_number').hide();
-		this.$el.find('#job_number2').show();
-		this.$el.find('#project').attr("readonly", false);
+		this.$el.find('#job_number2').val('').show();
+		this.$el.find('#project').val('').attr("readonly", false);
 		this.jobExists = false;
 	},
 	initialize : function(){
-		
-		this.collection = window.App.instance.get('steelTypes');
-		this.formValid = false;
-		this.jobExists = true;
+		this.formValid  = false;
+		this.jobExists  = true;
 		console.log(moment().valueOf());
-		
 	},
 	onShow : function(){
 		// Render Type Options
-		console.log(this.collection);
 		var self = this;
+		var data = [];
 
 		this.collection.each(function(model, i){
-			console.log(model.get('type'), i);
 			var type = model.get('type');
-			var id = model.id;
+			var id   = model.id;
 
-			console.log(self.$el.find('.steel_type'))
 			self.$el.find('.steel_type').append('<option value="'+id+'">'+type+'</option>');
 		}, this);
 
 		window.App.instance.get('sites').fetch().done(function(response){
 			$.each(response, function(i, val){
 				self.$el.find('#job_number').append('<option project="'+val.project+'" value="'+val.job_number+'">'+val.job_number+'</option>');
-			})
+			});
 		});
 	},
 	renderProject: function(e){
@@ -938,6 +765,7 @@ Add = Marionette.ItemView.extend({
 		this.$el.find('.steel_grade').empty().append('<option value="">Please select</option>');
 
 		var typeID = $(e.currentTarget).val();
+
 		if(typeID.length){
 			var type = this.collection.get(typeID);
 			var validSections = type.get('sections');
@@ -965,11 +793,9 @@ Add = Marionette.ItemView.extend({
 		var steel_item = new Model(options);
 		this.$el.find('form.add_steel').empty();
 
-		steel_item.save()
-		.done(function(response){
+		steel_item.save().done(function(response){
 			_this.$el.find($('.confirmation')).show();
-		})
-		.fail(function(response){
+		}).fail(function(response){
 			// NOTE: Some thing needs to go here
 			console.log(response);
 		})
@@ -982,22 +808,22 @@ Add = Marionette.ItemView.extend({
 	},
 	validateForm: function(){
 		var options = {};
-		options.extension = ('add-steel');
-		options.type = this.$el.find('.steel_type option:selected').text();
-		options.section = this.$el.find('.steel_section option:selected').text();
-		options.grade = this.$el.find('.steel_grade option:selected').text();
-		options.length = this.$el.find('#length ').val();
-		options.quantity = this.$el.find('#quantity').val();
-		options.project  = this.$el.find('#project').val();
+		options.extension  = ('add-steel');
+		options.type       = this.$el.find('.steel_type option:selected').text();
+		options.section    = this.$el.find('.steel_section option:selected').text();
+		options.grade      = this.$el.find('.steel_grade option:selected').text();
+		options.length     = this.$el.find('#length ').val();
+		options.quantity   = this.$el.find('#quantity').val();
+		options.project    = this.$el.find('#project').val();
+
 		if(this.jobExists)
 			options.job_number = this.$el.find('#job_number option:selected').text()
 		else
-			options.job_number = this.$el.find('#job_number2').val();
-		options.date_col   = this.$el.find('#date_col').val();
-		options.comments = this.$el.find('#comments').val();
+			options.job_number = this.$el.find('#job_number2').val()
 
-		// Steel Log Data
-		options.added_by = window.App.instance.get('user').get('username');
+		options.date_col   = this.$el.find('#date_col').val();
+		options.comments   = this.$el.find('#comments').val();
+		options.added_by   = window.App.instance.get('user').get('username');
 		options.date_added = moment().format("DD-MM-YYYY HH:MM").toString();
 
 		var _this = this;
@@ -1043,7 +869,7 @@ Add = Marionette.ItemView.extend({
 });
 
 module.exports = Add;
-},{"../../sites/module":23,"../../steel_class/collection":40,"../model":26,"./templates/add.hbs":35,"backbone":62,"backbone.marionette":58,"jquery":84,"jquery-ui":83}],31:[function(require,module,exports){
+},{"../../sites/module":20,"../model":23,"./templates/add.hbs":32,"backbone":58,"backbone.marionette":54,"jquery":80,"jquery-ui":79}],28:[function(require,module,exports){
 var $ = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone = require('backbone'),
@@ -1051,18 +877,27 @@ var $ = require('jquery')
     Template = require('./templates/edit.hbs'),
     SteelTypes = require('../../steel_class/collection');
 
+require('jquery-ui');
+
 Edit = Marionette.ItemView.extend({
 	id : 'steel_edit-view',
 	tagName : 'div',
 	className : 'edit_item',
 	template : Template,
 	events : {
-		'click input#submit-form' : 'submitForm',
-		'click input#cancel-form' : 'cancelForm',
-		'change select.steel_type' : 'renderSections'
+		'click input#submit-form'  : 'validateForm',
+		'click input#cancel-form'  : 'cancelForm',
+		'change select.steel_type' : 'renderSections',
+		'change select#job_number' : 'renderProject',
+		'focus input#date_col'     : 'selectDate',
+		'click div.add_project'    : 'addProjectForm'
+
 	},
 	initialize : function(){
 		var self = this;
+
+		this.formValid  = false;
+		this.jobExists  = true;
 
 		// NOTE: This may need to be moved
 		this.model.fetch().done(function(response){
@@ -1072,6 +907,13 @@ Edit = Marionette.ItemView.extend({
 			console.log(response)
 		});
 		
+	},
+	addProjectForm: function(e){
+		$(e.currentTarget).hide();
+		this.$el.find('#job_number').hide();
+		this.$el.find('#job_number2').val('').show();
+		this.$el.find('#project').val('').attr("readonly", false);
+		this.jobExists = false;
 	},
 	getValidTypes : function(){
 		this.steelTypes = new SteelTypes();
@@ -1089,16 +931,29 @@ Edit = Marionette.ItemView.extend({
 			
 			_.defaults(self.model.attributes, obj.attributes);
 
-			// Remove from sthe selected section from sections[]
+			// Remove selected section from sections[]
 			// and the selected grade from grades[]
 			self.model.set('sections', _.without(self.model.get('sections'), self.model.get('section')));
 			self.model.set('grades', _.without(self.model.get('grades'), self.model.get('grade')));
 
+			window.App.instance.get('sites').fetch();
+
 			self.render(self.model);
 		});
 	},
-	renderSections : function(e){
+	renderProject: function(e){
+		e.preventDefault();
 
+		var collection = window.App.instance.get('sites');
+
+		var project = _.find(collection.models, function(site){
+			return site.get('job_number') == $(e.currentTarget).val()
+		});
+
+		this.$el.find('#project').val(project.get('project'))
+
+	},
+	renderSections : function(e){
 		var obj = {};
 		var type = $(e.currentTarget).val();
 
@@ -1115,32 +970,93 @@ Edit = Marionette.ItemView.extend({
 
 		this.render(this.model);
 	},
+	onRender: function(){
+		var self = this;
+		var collection = window.App.instance.get('sites').toJSON();
+
+		if(this.model.get('job_number')){
+			$.each(collection, function(i, val){
+				if(val.job_number !== self.model.get('job_number'))
+					self.$el.find('#job_number').append('<option project="'+val.project+'" value="'+val.job_number+'">'+val.job_number+'</option>');
+			});
+		}
+	},
+	selectDate : function(){
+		this.$el.find('#date_col').datepicker({ 
+			minDate: 0,
+			dateFormat: 'dd-mm-yy'
+		});
+	},
 	cancelForm : function(){
 		window.history.back();
 	},
-	submitForm : function(){
-		var options = {};
-		options.extension = ('/update-steel');
-		options.type = this.$el.find($('.steel_type option:selected')).text();
-		options.section = this.$el.find($('.steel_section option:selected')).text();
-		options.grade = this.$el.find($('.steel_grade option:selected')).text();
-		options.length = this.$el.find($('#length ')).val();
-		options.quantity = this.$el.find($('#quantity')).val();
-		options.comments = this.$el.find($('#comments')).val();
-
+	submitForm : function(options){
 		var self = this;
+
 		this.model.save(options).always(function(){
 			self.$el.find('form.add_steel').empty();
 		}).done(function(response){
 			Backbone.history.navigate('transactions/outgoing', {trigger: true})
 			console.log(response);
 		});
-	}
+	},
+	validateForm: function(){
+		var options = {};
+		options.extension  = ('/update-steel');
+		options.type       = this.$el.find('.steel_type option:selected').text();
+		options.section    = this.$el.find('.steel_section option:selected').text();
+		options.grade      = this.$el.find('.steel_grade option:selected').text();
+		options.length     = this.$el.find('#length ').val();
+		options.quantity   = this.$el.find('#quantity').val();
+		options.project    = this.$el.find('#project').val();
+
+		if(this.jobExists)
+			options.job_number = this.$el.find('#job_number option:selected').text()
+		else
+			options.job_number = this.$el.find('#job_number2').val()
+
+		options.date_col   = this.$el.find('#date_col').val();
+		options.comments   = this.$el.find('#comments').val();
+		options.added_by   = window.App.instance.get('user').get('username');
+		options.date_added = moment().format("DD-MM-YYYY HH:MM").toString();
+
+		var _this = this;
+
+		// NOTE: Need to find a better way to do this
+		var counter = 0;
+		var inputsToValidate = [
+			options.type, 
+			options.section, 
+			options.grade, 
+			options.length, 
+			options.quantity,
+			options.project,
+			options.job_number,
+			options.date_col
+		];
+
+		// Loop through each item to check for empty strings
+		$.each(inputsToValidate, function(key, value){
+			if(value === '' || value === 'Please select' ){
+				_this.$el.find('.error').append('<h3>Submission Failed!</h3><p>Please fill in all fields</p>');
+				_this.$el.find('.error').show();
+				setTimeout(function(){
+					_this.$el.find('.error').fadeOut();
+				}, 3000);
+				return false;
+			}
+			else {
+				counter++;
+			}
+			if(key === (inputsToValidate.length - 1))
+				_this.submitForm(options);
+		});
+	},
 
 });
 
 module.exports = Edit;
-},{"../../steel_class/collection":40,"./templates/edit.hbs":36,"backbone":62,"backbone.marionette":58,"jquery":84,"underscore":86}],32:[function(require,module,exports){
+},{"../../steel_class/collection":37,"./templates/edit.hbs":33,"backbone":58,"backbone.marionette":54,"jquery":80,"jquery-ui":79,"underscore":82}],29:[function(require,module,exports){
 var $ = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone = require('backbone'),
@@ -1178,8 +1094,8 @@ Item = Marionette.ItemView.extend({
 });
 
 module.exports = Item;
-},{"./templates/item.hbs":38,"backbone":62,"backbone.marionette":58,"jquery":84}],33:[function(require,module,exports){
-var $ = require('jquery')
+},{"./templates/item.hbs":35,"backbone":58,"backbone.marionette":54,"jquery":80}],30:[function(require,module,exports){
+var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
     ItemView   = require('./item'),
     Template   = require('./templates/filter.hbs'),
@@ -1190,13 +1106,13 @@ List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : ItemView,
 	initialize : function(){
-		console.log('modular: list')
 		$('#filter-view').show();
+
 		var self = this;
-		this.collection.fetch()
-		.done(function(response){
+
+		this.collection.fetch().done(function(response){
 			self.all_items = self.collection;
-			console.log('coll',self.collection)
+
 			self.showFilter();
 		})
 		.fail(function(response){
@@ -1240,9 +1156,6 @@ List = Marionette.CollectionView.extend({
 		});
 
 		this.render(this.collection)
-	},
-	viewComparator : function(){
-
 	},
 	destroy : function(){
 		console.log('close')
@@ -1302,7 +1215,7 @@ var FilterView = Marionette.ItemView.extend({
 });
 
 module.exports = List;
-},{"../../steel_class/collection":40,"../../steel_class/model":41,"./item":32,"./templates/filter.hbs":37,"backbone.marionette":58,"jquery":84}],34:[function(require,module,exports){
+},{"../../steel_class/collection":37,"../../steel_class/model":38,"./item":29,"./templates/filter.hbs":34,"backbone.marionette":54,"jquery":80}],31:[function(require,module,exports){
 var $ = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone = require('backbone'),
@@ -1488,14 +1401,14 @@ Order = Marionette.ItemView.extend({
 });
 
 module.exports = Order;
-},{"../model":26,"./templates/order.hbs":39,"backbone":62,"backbone.marionette":58,"jquery":84,"jquery-ui":83,"moment":85}],35:[function(require,module,exports){
+},{"../model":23,"./templates/order.hbs":36,"backbone":58,"backbone.marionette":54,"jquery":80,"jquery-ui":79,"moment":81}],32:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n			\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<div class=\"project_form\">\n			<label for=\"job_number\">Job No.</label><br>\n			<select class=\"form-control half_width\" id=\"job_number\" name=\"job_number\" type=\"number\">\n				<option value=\"\">Please select</option>\n			</select>\n			<input class=\"form-control half_width\" id=\"job_number2\" name=\"job_number\" type=\"number\"></input>\n			<div class=\"add_project\"><span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span></div>\n\n			<label id=\"project_label\" for=\"project\">Project Name</label>\n			<input class=\"form-control\" id=\"project\" name=\"project\" type=\"text\" readonly></input>\n		</div>\n		\n\n\n		<label for=\"date_col\">Collection Date</label><br>\n		<input readonly=\"true\" id=\"date_col\" class=\"form-control half_width\" type=\"text\"></input>\n		</span>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Item Added!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Item has been added!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n</div>";
+    return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<div class=\"project_form\">\n			<label for=\"job_number\">Job No.</label><br>\n			<select class=\"form-control half_width\" id=\"job_number\" name=\"job_number\" type=\"number\">\n				<option value=\"\">Please select</option>\n			</select>\n			<input class=\"form-control half_width\" id=\"job_number2\" name=\"job_number\" type=\"number\"></input>\n			<div class=\"add_project\"><span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span></div>\n\n			<label id=\"project_label\" for=\"project\">Project Name</label>\n			<input class=\"form-control\" id=\"project\" name=\"project\" type=\"text\" readonly></input>\n		</div>\n		\n\n\n		<label for=\"date_col\">Collection Date</label><br>\n		<input readonly=\"true\" id=\"date_col\" class=\"form-control half_width\" type=\"text\"></input>\n		</span>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Item Added!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Item has been added!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],36:[function(require,module,exports){
+},{"hbsfy/runtime":78}],33:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -1541,7 +1454,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
   return "value="
     + container.escapeExpression(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"quantity","hash":{},"data":data}) : helper)));
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper;
+    var stack1, helper, alias1=helpers.helperMissing, alias2="function", alias3=container.escapeExpression;
 
   return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n"
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -1556,12 +1469,20 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.length : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + " id=\"length\" name=\"length\" type=\"number\">\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" "
     + ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.quantity : depth0),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " id=\"quantity\" name=\"quantity\" type=\"number\">\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\">"
-    + container.escapeExpression(((helper = (helper = helpers.comments || (depth0 != null ? depth0.comments : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"comments","hash":{},"data":data}) : helper)))
+    + " id=\"quantity\" name=\"quantity\" type=\"number\">\n\n		<div class=\"project_form\">\n			<label for=\"job_number\">Job No.</label><br>\n			<select class=\"form-control half_width\" id=\"job_number\" name=\"job_number\" type=\"number\">\n				<option value="
+    + alias3(((helper = (helper = helpers.job_number || (depth0 != null ? depth0.job_number : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"job_number","hash":{},"data":data}) : helper)))
+    + ">"
+    + alias3(((helper = (helper = helpers.job_number || (depth0 != null ? depth0.job_number : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"job_number","hash":{},"data":data}) : helper)))
+    + "</option>\n			</select>\n			<input class=\"form-control half_width\" id=\"job_number2\" name=\"job_number\" type=\"number\"></input>\n			<div class=\"add_project\"><span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span></div>\n\n			<label id=\"project_label\" for=\"project\">Project Name</label>\n			<input class=\"form-control\" id=\"project\" name=\"project\" type=\"text\" value=\""
+    + alias3(((helper = (helper = helpers.project || (depth0 != null ? depth0.project : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"project","hash":{},"data":data}) : helper)))
+    + "\"readonly></input>\n		</div>\n\n		<label for=\"date_col\">Collection Date</label><br>\n		<input readonly=\"true\" id=\"date_col\" class=\"form-control half_width\" type=\"text\" value=\""
+    + alias3(((helper = (helper = helpers.date_col || (depth0 != null ? depth0.date_col : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"date_col","hash":{},"data":data}) : helper)))
+    + "\"></input>\n		</span>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\">"
+    + alias3(((helper = (helper = helpers.comments || (depth0 != null ? depth0.comments : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"comments","hash":{},"data":data}) : helper)))
     + "</textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],37:[function(require,module,exports){
+},{"hbsfy/runtime":78}],34:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -1597,7 +1518,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + "	</div>\n</div>	";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],38:[function(require,module,exports){
+},{"hbsfy/runtime":78}],35:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -1636,7 +1557,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
   return ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.quantity : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
-},{"hbsfy/runtime":82}],39:[function(require,module,exports){
+},{"hbsfy/runtime":78}],36:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -1657,7 +1578,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + "</div>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Order Confirmed!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Your order has been confirmed!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n	<div class=\"text\">\n		\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],40:[function(require,module,exports){
+},{"hbsfy/runtime":78}],37:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	Model = require('./model');
@@ -1676,7 +1597,7 @@ Collection = Backbone.Collection.extend({
 });
 
 module.exports = Collection;
-},{"./model":41,"backbone":62,"jquery":84}],41:[function(require,module,exports){
+},{"./model":38,"backbone":58,"jquery":80}],38:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	
@@ -1700,25 +1621,17 @@ Model = Backbone.Model.extend({
 });
 
 module.exports = Model;
-},{"backbone":62,"jquery":84}],42:[function(require,module,exports){
+},{"backbone":58,"jquery":80}],39:[function(require,module,exports){
 var $           = require('jquery'),
 	Backbone    = require('backbone'),
 	Collection  = require('./collection'),
 	Model    	= require('./model');
-	// Router   = require('./router');
-
-Backbone.$ = $;
-
-Module = {
+	
+module.exports = {
 	Model      : Model,
 	Collection : Collection
-}
-
-
-// new Router();
-
-module.exports = Module;
-},{"./collection":40,"./model":41,"backbone":62,"jquery":84}],43:[function(require,module,exports){
+};
+},{"./collection":37,"./model":38,"backbone":58,"jquery":80}],40:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	Model    = require('../steel/model');
@@ -1727,14 +1640,14 @@ var $        = require('jquery'),
 Incoming = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_outs/users?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_outs/users?token=' + window.sessionStorage.token;
 	}
 });
 
 Outgoing = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
-		return window.App.apiURL + '/steel_items/users?token=' + window.sessionStorage.token
+		return window.App.apiURL + '/steel_items/users?token=' + window.sessionStorage.token;
 	}
 });
 
@@ -1742,7 +1655,7 @@ module.exports = {
 	Incoming : Incoming,
 	Outgoing : Outgoing
 };
-},{"../steel/model":26,"backbone":62,"jquery":84}],44:[function(require,module,exports){
+},{"../steel/model":23,"backbone":58,"jquery":80}],41:[function(require,module,exports){
 var $          = require('jquery'),
 	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
@@ -1754,19 +1667,25 @@ var Controller = Marionette.Controller.extend({
     },
     viewTransactions : function(){
         $('#page_title').html('Account');
+
         var view = new Module.Views.Transactions();
+
         this.renderView(view) 
     },
     viewIncoming : function(){
         $('#page_title').html('Incoming');
+
         var collection = window.App.instance.get('user').get('incoming');
-        var view = new Module.Views.Incoming({collection : collection});
+        var view       = new Module.Views.Incoming({collection : collection});
+
         this.renderView(view);
     },
     viewOutgoing : function(){
         $('#page_title').html('Outgoing');
+
         var collection = window.App.instance.get('user').get('outgoing');
-        var view = new Module.Views.Outgoing({collection : collection});
+        var view       = new Module.Views.Outgoing({collection : collection});
+        
         this.renderView(view);
     },
     renderView: function(view) {
@@ -1782,10 +1701,11 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"./module":46,"backbone.marionette":58,"jquery":84,"underscore":86}],45:[function(require,module,exports){
+},{"./module":43,"backbone.marionette":54,"jquery":80,"underscore":82}],42:[function(require,module,exports){
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
 	Collection = require('./collection');
+	
 Backbone.$ = $;
 
 Model = Backbone.Model.extend({
@@ -1802,7 +1722,7 @@ Model = Backbone.Model.extend({
 		console.log('user initialized');
 	},
 	loggedIn : function(){
-	   this.fetch()
+	   this.fetch();
 	},
 	parse : function(response){
 		response.id = response._id;
@@ -1827,29 +1747,21 @@ Model = Backbone.Model.extend({
 	}
 });
 
-
-
 module.exports = Model;
 	
 
 
-},{"./collection":43,"backbone":62,"jquery":84}],46:[function(require,module,exports){
+},{"./collection":40,"backbone":58,"jquery":80}],43:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	Model    = require('./model'),
 	Views    = require('./view');
-	// Router   = require('./router');
 
-Backbone.$ = $;
-
-Module = {
+module.exports = {
 	Model  : Model,
 	Views  : Views
-}
-// new Router();
-
-module.exports = Module;
-},{"./model":45,"./view":48,"backbone":62,"jquery":84}],47:[function(require,module,exports){
+};
+},{"./model":42,"./view":45,"backbone":58,"jquery":80}],44:[function(require,module,exports){
 var $ 		   = require('jquery'),
 	Backbone   = require('backbone'),
 	Controller = require('./controller');
@@ -1886,7 +1798,7 @@ Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{"./controller":44,"backbone":62,"jquery":84}],48:[function(require,module,exports){
+},{"./controller":41,"backbone":58,"jquery":80}],45:[function(require,module,exports){
 var Index        = require('./views/index'),
 	Transactions = require('./views/transactions'),
 	Outgoing     = require('./views/outgoing'),
@@ -1898,26 +1810,26 @@ module.exports = {
 	Outgoing     : Outgoing,
 	Incoming     : Incoming
 };
-},{"./views/incoming":49,"./views/index":50,"./views/outgoing":51,"./views/transactions":56}],49:[function(require,module,exports){
-var $ = require('jquery')
+},{"./views/incoming":46,"./views/index":47,"./views/outgoing":48,"./views/transactions":53}],46:[function(require,module,exports){
+var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/incoming.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/incoming.hbs');
 
 var Item = Marionette.ItemView.extend({
-	id : 'order-view',
-	tagName : 'div',
-	className : 'list_item',
-	template : Template,
+	id         : 'order-view',
+	tagName    : 'div',
+	className  : 'list_item',
+	template   : Template,
 	initialize : function(){
 		
 	}
 });
 
 List = Marionette.CollectionView.extend({
-	tagname : 'div',
-	className: 'orders-view',
-	childView : Item,
+	tagname    : 'div',
+	className  : 'orders-view',
+	childView  : Item,
 	initialize : function(){
 		
 		this.collection.fetch({
@@ -1929,7 +1841,7 @@ List = Marionette.CollectionView.extend({
 module.exports = List;
 
 
-},{"./templates/incoming.hbs":52,"backbone":62,"backbone.marionette":58,"jquery":84}],50:[function(require,module,exports){
+},{"./templates/incoming.hbs":49,"backbone":58,"backbone.marionette":54,"jquery":80}],47:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -1946,11 +1858,10 @@ Index = Marionette.ItemView.extend({
 		'click button#home' : 'navHome',
 		'click button#back' : 'goBack',
 		'click li#account'  : 'openAccount',
-		'click li#logout'  : 'logout'
+		'click li#logout'   : 'logout'
 	},
 	initialize : function(){
 		var self = this;
-		console.log(this.$el)
 		this.$el.addClass('background');
 
 		$(document).on('click', function(e) {
@@ -1963,7 +1874,7 @@ Index = Marionette.ItemView.extend({
 		e.preventDefault();
 		
 		this.$el.find($('#menu-container')).css({'display' : 'block'});
-		e.stopPropagation()
+		e.stopPropagation();
 	},
 	openAccount : function(){
 		Backbone.history.navigate('transactions', {trigger : true});
@@ -1983,20 +1894,20 @@ Index = Marionette.ItemView.extend({
 });
 
 module.exports = Index;
-},{"../module":46,"./templates/index.hbs":53,"backbone":62,"backbone.marionette":58,"jquery":84}],51:[function(require,module,exports){
-var $ = require('jquery')
+},{"../module":43,"./templates/index.hbs":50,"backbone":58,"backbone.marionette":54,"jquery":80}],48:[function(require,module,exports){
+var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/outgoing.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/outgoing.hbs');
 
 var Item = Marionette.ItemView.extend({
-	id : 'posts-view',
-	tagName : 'div',
+	id        : 'posts-view',
+	tagName   : 'div',
 	className : 'list_item',
-	template : Template,
+	template  : Template,
 	events : {
-		'click li#edit' : 'editPost',
-		'click li#delete' : 'deleteItem',
+		'click li#edit'        : 'editPost',
+		'click li#delete'      : 'deleteItem',
 		'click button.options' : 'showOptions'
 	},
 	initialize : function(){
@@ -2007,14 +1918,11 @@ var Item = Marionette.ItemView.extend({
 		    }
 		});
 	},
-	onShow : function(){
-		console.log(this.model)
-	},
 	showOptions : function(e){
 		e.preventDefault();
 		
 		this.$el.find('.actions-container').css({'display' : 'block'});
-		e.stopPropagation()
+		e.stopPropagation();
 	},
 	editPost : function(){
 		Backbone.history.navigate('edit/'+this.model.id, {trigger : true})
@@ -2034,9 +1942,9 @@ var Item = Marionette.ItemView.extend({
 });
 
 List = Marionette.CollectionView.extend({
-	tagname : 'div',
-	childView : Item,
-	className : 'posts-view',
+	tagname    : 'div',
+	childView  : Item,
+	className  : 'posts-view',
 	initialize : function(){
 		
 		this.collection.fetch({
@@ -2046,7 +1954,7 @@ List = Marionette.CollectionView.extend({
 });
 
 module.exports = List;
-},{"./templates/outgoing.hbs":54,"backbone":62,"backbone.marionette":58,"jquery":84}],52:[function(require,module,exports){
+},{"./templates/outgoing.hbs":51,"backbone":58,"backbone.marionette":54,"jquery":80}],49:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -2067,14 +1975,14 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + "<p></div>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],53:[function(require,module,exports){
+},{"hbsfy/runtime":78}],50:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"header-container\">\n	<button id=\"menu\"><span class=\"icon glyphicon glyphicon-user\" aria-hidden=\"true\"></span></button>\n	<button id=\"home\"><span class=\"icon glyphicon glyphicon-home\" aria-hidden=\"true\"></span></button>\n	<div id=\"page_title\">Options</div>\n	<div class=\"mc\" id=\"menu-container\">\n		<ul>\n			<li class=\"menu-option\" id=\"account\">My Account\n				<span class=\"icon glyphicon glyphicon-folder-open\" aria-hidden=\"true\">\n			</li>\n			<li class=\"menu-option\" id=\"logout\">Log Out\n			<span class=\"icon glyphicon glyphicon-log-out\" aria-hidden=\"true\">\n			</li>\n		</ul>\n	</div>\n</div>	";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],54:[function(require,module,exports){
+},{"hbsfy/runtime":78}],51:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -2097,60 +2005,40 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
   return ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.available : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
-},{"hbsfy/runtime":82}],55:[function(require,module,exports){
+},{"hbsfy/runtime":78}],52:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"account-container\">\n	<div id=\"added_items\" class=\"list-item\">\n		<p>Added Items</p>\n	</div>\n	<div id=\"ordered_items\" class=\"list-item\">\n		<p>Ordered Items</p>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":82}],56:[function(require,module,exports){
-var $ = require('jquery'),
+},{"hbsfy/runtime":78}],53:[function(require,module,exports){
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-    Template = require('./templates/transactions.hbs');
+    Template   = require('./templates/transactions.hbs');
 
 Transactions = Marionette.ItemView.extend({
-	id : 'account-view',
-	tagName : 'div',
+	id        : 'account-view',
+	tagName   : 'div',
 	className : 'account-view',
-	template : Template,
+	template  : Template,
 	events : {
 		'click #ordered_items' : 'viewIncoming',
-		'click #added_items' : 'viewOutgoing'
+		'click #added_items'   : 'viewOutgoing'
 	},
 	initialize : function(){
-		console.log('ored')
+
 	},
 	viewIncoming : function(){
-		console.log('boo')
-		Backbone.history.navigate('transactions/incoming', {trigger : true})
+		Backbone.history.navigate('transactions/incoming', {trigger : true});
 	},
 	viewOutgoing : function(){
-		console.log('view posts')
-		Backbone.history.navigate('transactions/outgoing', {trigger : true})
+		Backbone.history.navigate('transactions/outgoing', {trigger : true});
 	}
 });
 
 module.exports = Transactions;
-},{"./templates/transactions.hbs":55,"backbone.marionette":58,"jquery":84}],57:[function(require,module,exports){
-var $ = require('jquery'),
-	Backbone = require('backbone');
-
-Backbone.$ = $;
-
-var ExtendRouter = Backbone.Router.extend({
-	routes : {
-		'confirmation'    : 'confirmationView'
-	},
-	confirmationView : function(){
-		console.log('extended router');
-		alert('extended router')
-	}
-	
-});
-
-module.exports = ExtendRouter;
-},{"backbone":62,"jquery":84}],58:[function(require,module,exports){
+},{"./templates/transactions.hbs":52,"backbone.marionette":54,"jquery":80}],54:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
 // v2.4.2
@@ -5589,7 +5477,7 @@ module.exports = ExtendRouter;
   return Marionette;
 }));
 
-},{"backbone":61,"backbone.babysitter":59,"backbone.wreqr":60,"underscore":86}],59:[function(require,module,exports){
+},{"backbone":57,"backbone.babysitter":55,"backbone.wreqr":56,"underscore":82}],55:[function(require,module,exports){
 // Backbone.BabySitter
 // -------------------
 // v0.1.8
@@ -5781,7 +5669,7 @@ module.exports = ExtendRouter;
 
 }));
 
-},{"backbone":61,"underscore":86}],60:[function(require,module,exports){
+},{"backbone":57,"underscore":82}],56:[function(require,module,exports){
 // Backbone.Wreqr (Backbone.Marionette)
 // ----------------------------------
 // v1.3.3
@@ -6218,7 +6106,7 @@ module.exports = ExtendRouter;
 
 }));
 
-},{"backbone":61,"underscore":86}],61:[function(require,module,exports){
+},{"backbone":57,"underscore":82}],57:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.1
 
@@ -8095,7 +7983,7 @@ module.exports = ExtendRouter;
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":84,"underscore":86}],62:[function(require,module,exports){
+},{"jquery":80,"underscore":82}],58:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -9993,7 +9881,7 @@ module.exports = ExtendRouter;
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":84,"underscore":86}],63:[function(require,module,exports){
+},{"jquery":80,"underscore":82}],59:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10062,7 +9950,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars/base":64,"./handlebars/exception":67,"./handlebars/no-conflict":77,"./handlebars/runtime":78,"./handlebars/safe-string":79,"./handlebars/utils":80}],64:[function(require,module,exports){
+},{"./handlebars/base":60,"./handlebars/exception":63,"./handlebars/no-conflict":73,"./handlebars/runtime":74,"./handlebars/safe-string":75,"./handlebars/utils":76}],60:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10168,7 +10056,7 @@ exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
 
 
-},{"./decorators":65,"./exception":67,"./helpers":68,"./logger":76,"./utils":80}],65:[function(require,module,exports){
+},{"./decorators":61,"./exception":63,"./helpers":64,"./logger":72,"./utils":76}],61:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10186,7 +10074,7 @@ function registerDefaultDecorators(instance) {
 }
 
 
-},{"./decorators/inline":66}],66:[function(require,module,exports){
+},{"./decorators/inline":62}],62:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10217,7 +10105,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":80}],67:[function(require,module,exports){
+},{"../utils":76}],63:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10259,7 +10147,7 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 
 
-},{}],68:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10307,7 +10195,7 @@ function registerDefaultHelpers(instance) {
 }
 
 
-},{"./helpers/block-helper-missing":69,"./helpers/each":70,"./helpers/helper-missing":71,"./helpers/if":72,"./helpers/log":73,"./helpers/lookup":74,"./helpers/with":75}],69:[function(require,module,exports){
+},{"./helpers/block-helper-missing":65,"./helpers/each":66,"./helpers/helper-missing":67,"./helpers/if":68,"./helpers/log":69,"./helpers/lookup":70,"./helpers/with":71}],65:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10348,7 +10236,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":80}],70:[function(require,module,exports){
+},{"../utils":76}],66:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10448,7 +10336,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":67,"../utils":80}],71:[function(require,module,exports){
+},{"../exception":63,"../utils":76}],67:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10475,7 +10363,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":67}],72:[function(require,module,exports){
+},{"../exception":63}],68:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10506,7 +10394,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":80}],73:[function(require,module,exports){
+},{"../utils":76}],69:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10534,7 +10422,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],74:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10548,7 +10436,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],75:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10583,7 +10471,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":80}],76:[function(require,module,exports){
+},{"../utils":76}],72:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10629,7 +10517,7 @@ exports['default'] = logger;
 module.exports = exports['default'];
 
 
-},{}],77:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 (function (global){
 /* global window */
 'use strict';
@@ -10652,7 +10540,7 @@ module.exports = exports['default'];
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],78:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10945,7 +10833,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 }
 
 
-},{"./base":64,"./exception":67,"./utils":80}],79:[function(require,module,exports){
+},{"./base":60,"./exception":63,"./utils":76}],75:[function(require,module,exports){
 // Build out our basic SafeString type
 'use strict';
 
@@ -10962,7 +10850,7 @@ exports['default'] = SafeString;
 module.exports = exports['default'];
 
 
-},{}],80:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11088,15 +10976,15 @@ function appendContextPath(contextPath, id) {
 }
 
 
-},{}],81:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime')['default'];
 
-},{"./dist/cjs/handlebars.runtime":63}],82:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":59}],78:[function(require,module,exports){
 module.exports = require("handlebars/runtime")["default"];
 
-},{"handlebars/runtime":81}],83:[function(require,module,exports){
+},{"handlebars/runtime":77}],79:[function(require,module,exports){
 var jQuery = require('jquery');
 
 /*! jQuery UI - v1.10.3 - 2013-05-03
@@ -26103,7 +25991,7 @@ $.widget( "ui.tooltip", {
 
 }( jQuery ) );
 
-},{"jquery":84}],84:[function(require,module,exports){
+},{"jquery":80}],80:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -35315,7 +35203,7 @@ return jQuery;
 
 }));
 
-},{}],85:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -38511,7 +38399,7 @@ return jQuery;
     return _moment;
 
 }));
-},{}],86:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

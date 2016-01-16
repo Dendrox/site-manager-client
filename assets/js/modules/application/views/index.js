@@ -1,24 +1,18 @@
-var $ = require('jquery'),
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/index.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/index.hbs');
 
 Index = Marionette.ItemView.extend({
-	id : 'home-view',
-	tagName : 'div',
+	id        : 'home-view',
+	tagName   : 'div',
 	className : 'home-view',
-	template : Template,
+	template  : Template,
 	events : {
 		'click div#search' : 'searchMaterials',
-		'click div#add' : 'addMaterials'
+		'click div#add'    : 'addMaterials'
 	},
 	initialize : function(){
-		// window.App.instance.get('user').fetch().done(function(response){
-		// 	var user = response;
-		// 	window.App.instance.get('user').get('incoming').fetch({data : $.param({ordered_by : user.username})}).done(function(){
-		// 		window.App.instance.get('user').get('outgoing').fetch({data : $.param({added_by : user.username})});
-		// 	});
-		// });
 		if(window.sessionStorage.token)
 			this.model.get('user').loggedIn();
 	},

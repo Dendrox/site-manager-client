@@ -5,9 +5,7 @@ var $        = require('jquery'),
 
 	Backbone.$ = $;
 
-Module = {
+module.exports = {
 	Model : Model,
 	Views : Views
-}
-
-module.exports = Module;
+};

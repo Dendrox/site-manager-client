@@ -1,9 +1,9 @@
-var $ = require('jquery'),
-	_ = require('underscore'),
+var $          = require('jquery'),
+	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
-	LoginView = require('../session/views/index'),
+	LoginView  = require('../session/views/index'),
     HeaderView = require('../user/views/index'),
-    Module = require('./module');
+    Module     = require('./module');
 
 var Controller = Marionette.Controller.extend({
     initialize : function(){
@@ -18,21 +18,23 @@ var Controller = Marionette.Controller.extend({
     },
     navHome : function(){
     	$('#page_title').html('Options');
+
         var app_model = window.App.instance;
-    	var view = new Module.Views.Index({model: app_model});
-        var header = new HeaderView({model : window.App.instance.get('user')});
+    	var view      = new Module.Views.Index({model: app_model});
+        var header    = new HeaderView({model : window.App.instance.get('user')});
+
         this.showHeader(header);
     	this.renderView(view);
     },
     addMaterials : function(){
-        console.log('addMaterials');
         $('#page_title').html('Add Materials');
+
         var view = new Module.Views.Add();
         this.renderView(view);
     },
     searchMaterials : function(){
         $('#page_title').html('Search Materials');
-        console.log('search materials');
+
         var view = new Module.Views.Search();
         this.renderView(view);
     },

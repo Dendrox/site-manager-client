@@ -9,31 +9,40 @@ var Controller = Marionette.Controller.extend({
     },
     add : function(){
         $('#page_title').html('Add Steel');
-        var view = new Module.Views.Add();
+
+        var collection = window.App.instance.get('steelTypes');
+        var view        = new Module.Views.Add({collection : collection});
+
         this.renderView(view);
     },
     search : function(){
         $('#page_title').html('Search Steel');
+
         var collection = new Module.Collection();
-        var view = new Module.Views.List({collection : collection});
+        var view       = new Module.Views.List({collection : collection});
+
         this.renderView(view);
     },
     order : function(id){
         $('#page_title').html('Order');
+
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
         });
-        var view = new Module.Views.Order({model : model});
+        var view  = new Module.Views.Order({model : model});
+
         this.renderView(view);
     },
     edit : function(id){
         $('#page_title').html('Edit');
+
         var model = new Module.Model({
             id : id,
             extension : 'steel_item'
         });
-        var view = new Module.Views.Edit({model : model});
+        var view  = new Module.Views.Edit({model : model});
+        
         this.renderView(view);
     },
     renderView: function(view) {

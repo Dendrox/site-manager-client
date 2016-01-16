@@ -1,18 +1,18 @@
-var $ = require('jquery'),
-	Backbone = require('backbone'),
+var $          = require('jquery'),
+	Backbone   = require('backbone'),
 	Controller = require('./controller');
 
 Backbone.$ = $;
 
 var Router = Backbone.Router.extend({
 	routes : {
-		'home' : 'navHome',
-		'add' : 'addMaterials',
+		'home'   : 'navHome',
+		'add'    : 'addMaterials',
 		'search' : 'searchMaterials'
 	},
 	initialize : function(){
 		this.controller = new Controller();
-		console.log('Router Initialized')
+		console.log('App Router Initialized');
 	},
 	navHome : function(){
 		if(!window.sessionStorage.token)

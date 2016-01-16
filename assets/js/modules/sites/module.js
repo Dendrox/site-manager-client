@@ -1,9 +1,7 @@
-var Model = require('./model'),
+var Model      = require('./model'),
 	Collection = require('./collection');
 
-Module = {
+module.exports = {
 	Model  : Model,
 	Collection  : Collection
-}
-
-module.exports = Module;
+};

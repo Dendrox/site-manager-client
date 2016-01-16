@@ -9,7 +9,7 @@ Router = Backbone.Router.extend({
 		'login'    : 'login',
 	},
 	initialize : function(){
-		this.controller = new Controller()
+		this.controller = new Controller();
 	},
 	login : function(){
 		this.controller.login();

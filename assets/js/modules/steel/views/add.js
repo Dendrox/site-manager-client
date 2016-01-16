@@ -1,8 +1,7 @@
-var $ = require('jquery'),
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
     Template   = require('./templates/add.hbs'),
-    ItemClass  = require('../../steel_class/collection'),
     Model      = require('../model'),
     Sites      = require('../../sites/module');
 
@@ -11,53 +10,48 @@ require('jquery-ui');
 Backbone.$ = $;
 
 Add = Marionette.ItemView.extend({
-	id : 'add-steel-view',
-	tagName : 'div',
+	id        : 'add-steel-view',
+	tagName   : 'div',
 	className : 'add-steel-el',
-	template : Template,
+	template  : Template,
 	events : {
-		'click input#submit-form' : 'validateForm',
-		'click input#cancel-form' : 'cancelForm',
-		'click button#view' : 'viewOutgoing',
-		'click button#home' : 'goHome',
+		'click input#submit-form'  : 'validateForm',
+		'click input#cancel-form'  : 'cancelForm',
+		'click button#view'        : 'viewOutgoing',
+		'click button#home'        : 'goHome',
 		'change select.steel_type' : 'renderSections',
 		'change select#job_number' : 'renderProject',
-		'focus input#date_col' : 'selectDate',
-		'click div.add_project' : 'addProjectForm'
+		'focus input#date_col'     : 'selectDate',
+		'click div.add_project'    : 'addProjectForm'
 	},
 	addProjectForm: function(e){
 		$(e.currentTarget).hide();
 		this.$el.find('#job_number').hide();
-		this.$el.find('#job_number2').show();
-		this.$el.find('#project').attr("readonly", false);
+		this.$el.find('#job_number2').val('').show();
+		this.$el.find('#project').val('').attr("readonly", false);
 		this.jobExists = false;
 	},
 	initialize : function(){
-		
-		this.collection = window.App.instance.get('steelTypes');
-		this.formValid = false;
-		this.jobExists = true;
+		this.formValid  = false;
+		this.jobExists  = true;
 		console.log(moment().valueOf());
-		
 	},
 	onShow : function(){
 		// Render Type Options
-		console.log(this.collection);
 		var self = this;
+		var data = [];
 
 		this.collection.each(function(model, i){
-			console.log(model.get('type'), i);
 			var type = model.get('type');
-			var id = model.id;
+			var id   = model.id;
 
-			console.log(self.$el.find('.steel_type'))
 			self.$el.find('.steel_type').append('<option value="'+id+'">'+type+'</option>');
 		}, this);
 
 		window.App.instance.get('sites').fetch().done(function(response){
 			$.each(response, function(i, val){
 				self.$el.find('#job_number').append('<option project="'+val.project+'" value="'+val.job_number+'">'+val.job_number+'</option>');
-			})
+			});
 		});
 	},
 	renderProject: function(e){
@@ -77,6 +71,7 @@ Add = Marionette.ItemView.extend({
 		this.$el.find('.steel_grade').empty().append('<option value="">Please select</option>');
 
 		var typeID = $(e.currentTarget).val();
+
 		if(typeID.length){
 			var type = this.collection.get(typeID);
 			var validSections = type.get('sections');
@@ -104,11 +99,9 @@ Add = Marionette.ItemView.extend({
 		var steel_item = new Model(options);
 		this.$el.find('form.add_steel').empty();
 
-		steel_item.save()
-		.done(function(response){
+		steel_item.save().done(function(response){
 			_this.$el.find($('.confirmation')).show();
-		})
-		.fail(function(response){
+		}).fail(function(response){
 			// NOTE: Some thing needs to go here
 			console.log(response);
 		})
@@ -121,22 +114,22 @@ Add = Marionette.ItemView.extend({
 	},
 	validateForm: function(){
 		var options = {};
-		options.extension = ('add-steel');
-		options.type = this.$el.find('.steel_type option:selected').text();
-		options.section = this.$el.find('.steel_section option:selected').text();
-		options.grade = this.$el.find('.steel_grade option:selected').text();
-		options.length = this.$el.find('#length ').val();
-		options.quantity = this.$el.find('#quantity').val();
-		options.project  = this.$el.find('#project').val();
+		options.extension  = ('add-steel');
+		options.type       = this.$el.find('.steel_type option:selected').text();
+		options.section    = this.$el.find('.steel_section option:selected').text();
+		options.grade      = this.$el.find('.steel_grade option:selected').text();
+		options.length     = this.$el.find('#length ').val();
+		options.quantity   = this.$el.find('#quantity').val();
+		options.project    = this.$el.find('#project').val();
+
 		if(this.jobExists)
 			options.job_number = this.$el.find('#job_number option:selected').text()
 		else
-			options.job_number = this.$el.find('#job_number2').val();
-		options.date_col   = this.$el.find('#date_col').val();
-		options.comments = this.$el.find('#comments').val();
+			options.job_number = this.$el.find('#job_number2').val()
 
-		// Steel Log Data
-		options.added_by = window.App.instance.get('user').get('username');
+		options.date_col   = this.$el.find('#date_col').val();
+		options.comments   = this.$el.find('#comments').val();
+		options.added_by   = window.App.instance.get('user').get('username');
 		options.date_added = moment().format("DD-MM-YYYY HH:MM").toString();
 
 		var _this = this;

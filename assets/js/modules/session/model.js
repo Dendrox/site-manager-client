@@ -12,7 +12,7 @@ Model = Backbone.Model.extend({
 		return response;
 	},
 	urlRoot : function(){
-		return window.App.apiURL + '/authenticate' // comment
+		return window.App.apiURL + '/authenticate';
 	}
 });
 

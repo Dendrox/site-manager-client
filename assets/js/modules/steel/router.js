@@ -7,11 +7,11 @@ Backbone.$ = $;
 
 Router = Backbone.Router.extend({
 	routes : {
-		'add/steel' : 'add',
+		'add/steel'    : 'add',
 		'search/steel' : 'search',
-		'order/:id' : 'order',
-		'edit/:id' : 'edit',
-		'view/:id' : 'view'
+		'order/:id'    : 'order',
+		'edit/:id'     : 'edit',
+		'view/:id'     : 'view'
 	},
 	initialize : function(){
 		this.controller = new Controller();

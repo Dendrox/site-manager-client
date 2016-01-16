@@ -1,26 +1,24 @@
-var $ = require('jquery'),
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-    Template = require('./templates/transactions.hbs');
+    Template   = require('./templates/transactions.hbs');
 
 Transactions = Marionette.ItemView.extend({
-	id : 'account-view',
-	tagName : 'div',
+	id        : 'account-view',
+	tagName   : 'div',
 	className : 'account-view',
-	template : Template,
+	template  : Template,
 	events : {
 		'click #ordered_items' : 'viewIncoming',
-		'click #added_items' : 'viewOutgoing'
+		'click #added_items'   : 'viewOutgoing'
 	},
 	initialize : function(){
-		console.log('ored')
+
 	},
 	viewIncoming : function(){
-		console.log('boo')
-		Backbone.history.navigate('transactions/incoming', {trigger : true})
+		Backbone.history.navigate('transactions/incoming', {trigger : true});
 	},
 	viewOutgoing : function(){
-		console.log('view posts')
-		Backbone.history.navigate('transactions/outgoing', {trigger : true})
+		Backbone.history.navigate('transactions/outgoing', {trigger : true});
 	}
 });
 

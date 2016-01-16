@@ -1,25 +1,22 @@
-var $ = require('jquery'),
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-	Session = require('../model'),
-    Template = require('./templates/index.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/index.hbs');
 
 Backbone.$ = $;
 
 Index = Marionette.ItemView.extend({
-	id : 'login-view',
-	tagName : 'div',
+	id        : 'login-view',
+	tagName   : 'div',
 	className : 'login-view',
-	template : Template,
-
+	template  : Template,
 	events : {
-		'input #username' : 'validateUsername',
-		'input #password' : 'validateUsername',
+		'input #username'        : 'validateUsername',
+		'input #password'        : 'validateUsername',
 		'click #submit_password' : 'authenticateUser',
 	},
-
 	initialize : function(){
-		this.model = new Session();
+		console.log('session view');
 	},
 	validateUsername : function(){
 		console.log('validating username');
@@ -28,9 +25,10 @@ Index = Marionette.ItemView.extend({
 		var data = {
 			username : 'rody.kirwan@gmail.com',//$('#username').val(),
 			password : 'site1'//$('#password').val()
-		}
-		var params = {};
+		};
+		
 		var self = this;
+
 		this.model.fetch({data:data})
 		.done(function(response){
 			if(!response.success){

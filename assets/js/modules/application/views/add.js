@@ -1,13 +1,13 @@
-var $ = require('jquery'),
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/add.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/add.hbs');
 
 Add = Marionette.ItemView.extend({
-	id : 'material-types-view',
-	tagName : 'div',
+	id        : 'material-types-view',
+	tagName   : 'div',
 	className : 'material-types-el',
-	template : Template,
+	template  : Template,
 	events : {
 		'click div#add_steel' : 'addSteel'
 	},

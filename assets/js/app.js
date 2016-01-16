@@ -1,52 +1,52 @@
-var $ = require('jquery'),
+var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone');
+	Backbone   = require('backbone');
 
 Backbone.$ = $;
 
+// Set Remote and Local URLs
+var remote_url = 'https://intense-thicket-2598.herokuapp.com/api';
+var local_url  = 'http://localhost:8080/api';
+
 App = new Marionette.Application();
 
-App.views = {};
-App.data  = {};
-App.apiURL = 'https://intense-thicket-2598.herokuapp.com/api';//'http://localhost:8080/api';
-//'https://intense-thicket-2598.herokuapp.com/api';
+// Required Modules and files for App Initialization
+var Application   = require('./modules/application/module'),
+	AppRouter     = require('./modules/application/router'),
+	SteelRouter   = require('./modules/steel/router'),
+	UserRouter    = require('./modules/user/router'),
+	SessionRouter = require('./modules/session/router');
 
-
-// NOTE: This needs to be moved maybe to a boot module
-var Controller   = require('./controller'),
-	ExtendRouter = require('./views/router_extend'),
-	Application  = require('./modules/application/module'),
-	AppRouter    = require('./modules/application/router'),
-	SteelRouter  = require('./modules/steel/router'),
-	UserRouter   = require('./modules/user/router'),
-	User         = require('./models/user');
-
+// Setup Application
+App.views    = {};
+App.data     = {};
+App.apiURL   = remote_url;
 App.instance = new Application.Model();
 
 // Add Viewing Regions
 App.addRegions({
-	mainRegion : '#main-region',
-	headerRegion : '#header-region',
-	filterRegion : '#filter-region',
+	mainRegion    : '#main-region',
+	headerRegion  : '#header-region',
+	filterRegion  : '#filter-region',
 	loadingRegion : '#loading-region'
 });
 
+// Return user to login screen if no session token exists
+if(window.sessionStorage.token)
+    window.location.href = '/#home'
+else
+    window.location.href = '/#login'
 
-if(window.sessionStorage.token){
-    console.log('token exists!')
-    window.location.href = '/#home';
-}
-else{
-    console.log('token no exist')
-    window.location.href = '/#login';
-}
-
+// Start Application
 App.on('start', function() {
+	
+	// Initialise Routers
+	App.router          = new AppRouter();
+	App.router.steel    = new SteelRouter();
+	App.router.user     = new UserRouter();
+	App.router.sesssion = new SessionRouter();
 
-	App.router = new AppRouter();
-	App.router.steel = new SteelRouter();
-	App.router.user = new UserRouter();
-
+	// Note: Needs to be removed
 	$.ajaxSetup({
 	    beforeSend:function(){
 	        // show gif here, eg:
@@ -62,4 +62,5 @@ App.on('start', function() {
 });
 
 App.start();
+
 module.exports = App;

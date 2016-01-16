@@ -10,7 +10,6 @@ Model = Backbone.Model.extend({
 		job_number : null
 	},
 	urlRoot : function(){
-		// 'http://localhost:8080/api/add-steel'
 		var url = window.App.apiURL + '/sites';
 		return url;
 	}

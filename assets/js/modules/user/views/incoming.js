@@ -1,22 +1,22 @@
-var $ = require('jquery')
+var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/incoming.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/incoming.hbs');
 
 var Item = Marionette.ItemView.extend({
-	id : 'order-view',
-	tagName : 'div',
-	className : 'list_item',
-	template : Template,
+	id         : 'order-view',
+	tagName    : 'div',
+	className  : 'list_item',
+	template   : Template,
 	initialize : function(){
 		
 	}
 });
 
 List = Marionette.CollectionView.extend({
-	tagname : 'div',
-	className: 'orders-view',
-	childView : Item,
+	tagname    : 'div',
+	className  : 'orders-view',
+	childView  : Item,
 	initialize : function(){
 		
 		this.collection.fetch({

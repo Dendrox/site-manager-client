@@ -1,4 +1,4 @@
-var $ = require('jquery')
+var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
     ItemView   = require('./item'),
     Template   = require('./templates/filter.hbs'),
@@ -9,13 +9,13 @@ List = Marionette.CollectionView.extend({
 	tagname : 'div',
 	childView : ItemView,
 	initialize : function(){
-		console.log('modular: list')
 		$('#filter-view').show();
+
 		var self = this;
-		this.collection.fetch()
-		.done(function(response){
+
+		this.collection.fetch().done(function(response){
 			self.all_items = self.collection;
-			console.log('coll',self.collection)
+
 			self.showFilter();
 		})
 		.fail(function(response){
@@ -59,9 +59,6 @@ List = Marionette.CollectionView.extend({
 		});
 
 		this.render(this.collection)
-	},
-	viewComparator : function(){
-
 	},
 	destroy : function(){
 		console.log('close')

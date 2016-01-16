@@ -1,16 +1,16 @@
-var $ = require('jquery')
+var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
-	Backbone = require('backbone'),
-    Template = require('./templates/outgoing.hbs');
+	Backbone   = require('backbone'),
+    Template   = require('./templates/outgoing.hbs');
 
 var Item = Marionette.ItemView.extend({
-	id : 'posts-view',
-	tagName : 'div',
+	id        : 'posts-view',
+	tagName   : 'div',
 	className : 'list_item',
-	template : Template,
+	template  : Template,
 	events : {
-		'click li#edit' : 'editPost',
-		'click li#delete' : 'deleteItem',
+		'click li#edit'        : 'editPost',
+		'click li#delete'      : 'deleteItem',
 		'click button.options' : 'showOptions'
 	},
 	initialize : function(){
@@ -21,14 +21,11 @@ var Item = Marionette.ItemView.extend({
 		    }
 		});
 	},
-	onShow : function(){
-		console.log(this.model)
-	},
 	showOptions : function(e){
 		e.preventDefault();
 		
 		this.$el.find('.actions-container').css({'display' : 'block'});
-		e.stopPropagation()
+		e.stopPropagation();
 	},
 	editPost : function(){
 		Backbone.history.navigate('edit/'+this.model.id, {trigger : true})
@@ -48,9 +45,9 @@ var Item = Marionette.ItemView.extend({
 });
 
 List = Marionette.CollectionView.extend({
-	tagname : 'div',
-	childView : Item,
-	className : 'posts-view',
+	tagname    : 'div',
+	childView  : Item,
+	className  : 'posts-view',
 	initialize : function(){
 		
 		this.collection.fetch({

@@ -1,6 +1,7 @@
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
 	Collection = require('./collection');
+	
 Backbone.$ = $;
 
 Model = Backbone.Model.extend({
@@ -17,7 +18,7 @@ Model = Backbone.Model.extend({
 		console.log('user initialized');
 	},
 	loggedIn : function(){
-	   this.fetch()
+	   this.fetch();
 	},
 	parse : function(response){
 		response.id = response._id;
@@ -41,8 +42,6 @@ Model = Backbone.Model.extend({
 		return window.App.apiURL + '/user/logged-in?token='+window.sessionStorage.token;
 	}
 });
-
-
 
 module.exports = Model;
 	
