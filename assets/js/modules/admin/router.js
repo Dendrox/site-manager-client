@@ -6,7 +6,8 @@ Backbone.$ = $;
 
 var Router = Backbone.Router.extend({
 	routes : {
-		'users'   : 'showUsers'
+		'users'   : 'showUsers',
+		'user/add': 'addUser'
 	},
 	initialize : function(){
 		this.controller = new Controller();
@@ -17,6 +18,12 @@ var Router = Backbone.Router.extend({
 			return Backbone.history.navigate('login', {trigger: true})
 		else
 			this.controller.showUsers();
+	},
+	addUser: function(){
+		if(!window.sessionStorage.token || !window.App.instance.get('user').get('isAdmin'))
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.addUser();
 	}
 });
 

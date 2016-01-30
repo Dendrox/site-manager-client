@@ -17,6 +17,10 @@ Index = Marionette.ItemView.extend({
 		if(window.sessionStorage.token)
 			this.model.get('user').loggedIn();
 	},
+	onShow: function(){
+		if(window.App.instance.get('user').get('isAdmin') === false)
+			this.$el.find('#goToAdmin').hide();
+	},
 	searchMaterials : function(){
 		Backbone.history.navigate('search', {trigger : true})
 	},

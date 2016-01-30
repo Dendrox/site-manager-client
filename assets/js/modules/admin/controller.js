@@ -19,6 +19,12 @@ var Controller = Marionette.Controller.extend({
         })
         
     },
+    addUser: function(){
+        $('#page_title').html('Add Users');
+        var model = new Module.Model();
+        var view = new Module.Views.Add({model: model});
+        this.renderView(view);
+    },
     renderView: function(view) {
         this.destroyCurrentView(view);
         window.App.mainRegion.show(view);

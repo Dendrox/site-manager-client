@@ -22,8 +22,14 @@ List = Marionette.CollectionView.extend({
 	initialize : function(){
 		console.log(this.collection.toJSON())
 	},
+	events: {
+		'click #addUsers' : 'showForm'
+	},
 	onShow: function(){
 		this.$el.append('<div id="addUsers"><h3>Add</h3></div>')
+	},
+	showForm: function(){
+		Backbone.history.navigate('user/add', {trigger: true})
 	}
 	
 });

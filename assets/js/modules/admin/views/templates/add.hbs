@@ -1,0 +1,51 @@
+<div class="form-container">
+	<form class="add_steel">
+		<label for="first_name">First Name</label>
+		<input class="form-control" id="first_name" name="first_name" type="text"></input>
+
+		<label for="last_name">Last Name</label>
+		<input class="form-control" id="last_name" name="last_name" type="text"></input>
+
+		<label for="phone">Phone No.</label>
+		<input class="form-control" id="phone" name="phone" type="number"></input>
+
+		<label for="phone">Staff Type</label>
+		<select class="form-control" id="type" name="type">
+			<option vlaue="">Please Select</option>
+			<option vlaue="plant">Plant</option>
+			<option vlaue="site">Site</option>
+		</select>
+
+		<label for="isadmin">Is Administrator</label>
+		<select class="form-control" id="isadmin" name="type">
+			<option vlaue="">Please Select</option>
+			<option vlaue=true>Yes</option>
+			<option vlaue=false>No</option>
+		</select>
+
+		<label for="user_name">Email (Username)</label>
+		<input class="form-control" id="user_name" name="user_name" type="email"></input>
+
+		<label for="password">Choose PIN</label>
+		<input class="form-control" id="password" name="password" type="number"></input>
+
+		
+		<input class="confirm" id="submit-form" type="button" value="Add User"/>
+		<input class="cancel" id="cancel-form" type="button" value="Cancel"/>
+	</form>
+	<div class="confirmation">
+		<div class="confirm_header">
+			<h4>User Added!</h4>
+		</div>
+		<div class="text">
+			<p>User has been added!</p>
+		</div>
+		<div class="actions">
+			<button id="view">View</button>
+			<button id="home">Home</button>
+		</div>
+	</div>
+</div>
+<div class="error">
+	<span class="glyphicon glyphicon-remove-circle icon" aria-hidden="true"></span>
+</div>
