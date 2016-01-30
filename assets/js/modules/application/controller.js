@@ -3,6 +3,7 @@ var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	LoginView  = require('../session/views/index'),
     HeaderView = require('../user/views/index'),
+    AdminView  = require('../admin/views/index'),
     Module     = require('./module');
 
 var Controller = Marionette.Controller.extend({
@@ -37,6 +38,12 @@ var Controller = Marionette.Controller.extend({
 
         var view = new Module.Views.Search();
         this.renderView(view);
+    },
+    showAdminOptions: function(){
+        $('#page_title').html('Admin Options');
+        var view = new AdminView();
+
+        this.renderView(view)
     },
     renderView: function(view) {
         this.destroyCurrentView(view);

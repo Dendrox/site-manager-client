@@ -8,7 +8,8 @@ var Router = Backbone.Router.extend({
 	routes : {
 		'home'   : 'navHome',
 		'add'    : 'addMaterials',
-		'search' : 'searchMaterials'
+		'search' : 'searchMaterials',
+		'admin'  : 'showAdminOptions'
 	},
 	initialize : function(){
 		this.controller = new Controller();
@@ -31,6 +32,12 @@ var Router = Backbone.Router.extend({
 			return Backbone.history.navigate('login', {trigger: true})
 		else
 			this.controller.searchMaterials();
+	},
+	showAdminOptions: function(){
+		if(!window.sessionStorage.token || !window.App.instance.get('user').get('isAdmin'))
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.showAdminOptions();
 	}
 });
 

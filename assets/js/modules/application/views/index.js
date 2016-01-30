@@ -10,7 +10,8 @@ Index = Marionette.ItemView.extend({
 	template  : Template,
 	events : {
 		'click div#search' : 'searchMaterials',
-		'click div#add'    : 'addMaterials'
+		'click div#add'    : 'addMaterials',
+		'click #goToAdmin' : 'showAdmin'
 	},
 	initialize : function(){
 		if(window.sessionStorage.token)
@@ -21,6 +22,9 @@ Index = Marionette.ItemView.extend({
 	},
 	addMaterials : function(){
 		Backbone.history.navigate('add', {trigger : true})
+	},
+	showAdmin: function(){
+		Backbone.history.navigate('admin', {trigger : true})
 	}
 });
 

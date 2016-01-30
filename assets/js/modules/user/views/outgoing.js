@@ -49,9 +49,11 @@ List = Marionette.CollectionView.extend({
 	childView  : Item,
 	className  : 'posts-view',
 	initialize : function(){
-		
+		var self = this;
 		this.collection.fetch({
 			data : $.param({added_by : window.App.instance.get('user').get('username')})
+		}).done(function(){
+			console.log(self.collection.toJSON())
 		});
 	}
 });

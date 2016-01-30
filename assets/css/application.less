@@ -27,7 +27,7 @@ body, html {
 
 		.background{
 			background-color: #267712;
-			border-bottom: 1px solid #287515;
+			border-bottom: 1px solid #226311;
 			width: 100%;
 			height: 100%;
 		}
@@ -205,7 +205,7 @@ body, html {
 			}
 			
 		}
-		.home-view, .material_list-container, .account-view, .posts-view, .orders-view{
+		.home-view, .material_list-container, .account-view, .posts-view, .orders-view, .admin-view, .users_list{
 			width: 100%;
 			float: left;
 			margin-top: 50px;
@@ -224,30 +224,90 @@ body, html {
 					font-size: 15px;
 				}
 			}
-			.home-container .list-item{
-				width: 50%;
-			    height: 70px;
-			    padding: 15px 20px;
-			    float: left;
-			    border-bottom: 1px solid #E9F3E0;
-			    text-align: left;
-			    color: #333;
+
+			#addUsers{
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				height: 50px;
+				border-top: 1px solid #C3E6BB;
+				text-align: center;
+				background-color: #D6E9C6;
+				color: #165207;
+
+				h3{
+					margin: 0;
+					font-size: 15px;
+					line-height: 50px;
+					display: inline-block;
+				}
+			}
+
+			.user-item{
+				width: 100%;
+				height: 80px;
+				padding: 10px 20px;
+				border-bottom: 1px solid #efefef;
+				text-align: left;
+				cursor: pointer;
 
 				p{
-					margin: 0;
-					line-height: 40px;
+					color: #165207;
 					font-size: 15px;
 				}
+			}
+			.home-container{
 
-				.icon{
-					font-size: 25px;
-				    margin-top: 7px;
-				    color: #267712;
-				    float: right;
+				#goToAdmin{
+					position: absolute;
+					bottom: 0;
+					width: 100%;
+					height: 50px;
+					border-top: 1px solid #C3E6BB;
+					text-align: center;
+					background-color: #D6E9C6;
+					color: #165207;
+
+					h3{
+						margin: 0;
+						font-size: 15px;
+						line-height: 50px;
+						display: inline-block;
+					}
+
+					span{
+						display: inline-block;
+						font-size: 25px;
+						margin-top: 10px;
+						margin-left: 10px;
+					}
 				}
 
-				&#search{
-					border-right: 1px solid #E9F3E0;
+				.list-item{
+					width: 50%;
+				    height: 70px;
+				    padding: 15px 20px;
+				    float: left;
+				    border-bottom: 1px solid #E9F3E0;
+				    text-align: left;
+				    color: #333;
+
+					p{
+						margin: 0;
+						line-height: 40px;
+						font-size: 15px;
+					}
+
+					.icon{
+						font-size: 25px;
+					    margin-top: 7px;
+					    color: #267712;
+					    float: right;
+					}
+
+					&#search{
+						border-right: 1px solid #E9F3E0;
+					}
 				}
 			}
 		}

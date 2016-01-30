@@ -16,7 +16,8 @@ var Application   = require('./modules/application/module'),
 	AppRouter     = require('./modules/application/router'),
 	SteelRouter   = require('./modules/steel/router'),
 	UserRouter    = require('./modules/user/router'),
-	SessionRouter = require('./modules/session/router');
+	SessionRouter = require('./modules/session/router'),
+	AdminRouter   = require('./modules/admin/router');
 
 // Setup Application
 App.views    = {};
@@ -46,6 +47,7 @@ App.on('start', function() {
 	App.router.steel    = new SteelRouter();
 	App.router.user     = new UserRouter();
 	App.router.sesssion = new SessionRouter();
+	App.router.admin    = new AdminRouter();
 
 	// Note: Needs to be removed
 	$.ajaxSetup({
@@ -65,12 +67,191 @@ App.on('start', function() {
 App.start();
 
 module.exports = App;
-},{"./modules/application/module":4,"./modules/application/router":5,"./modules/session/router":15,"./modules/steel/router":25,"./modules/user/router":44,"backbone":58,"backbone.marionette":54,"jquery":80}],2:[function(require,module,exports){
+},{"./modules/admin/router":6,"./modules/application/module":14,"./modules/application/router":15,"./modules/session/router":25,"./modules/steel/router":35,"./modules/user/router":54,"backbone":68,"backbone.marionette":64,"jquery":90}],2:[function(require,module,exports){
+var $        = require('jquery'),
+	Backbone = require('backbone'),
+	moment = require('moment'),
+	Model = require('./model');
+	Backbone.$ = $;
+
+Collection = Backbone.Collection.extend({
+	model : Model,
+	url : function(){
+		return window.App.apiURL + '/users?token=' + window.sessionStorage.token
+		//add token to URL: ?token=' + window.App.data.token
+	}
+});
+
+module.exports = Collection;
+},{"./model":4,"backbone":68,"jquery":90,"moment":91}],3:[function(require,module,exports){
+var $          = require('jquery'),
+	_          = require('underscore'),
+    Marionette = require('backbone.marionette'),
+	Module     = require('./module');
+
+var Controller = Marionette.Controller.extend({
+    initialize : function(){
+        console.log('admin: controller');
+    },
+    showUsers: function(){
+        $('#page_title').html('List Users');
+        var collection = new Module.Collection();
+
+        var self = this;
+
+        collection.fetch().always(function(res){
+            var view = new Module.Views.List({collection: collection});
+            self.renderView(view);
+        })
+        
+    },
+    renderView: function(view) {
+        this.destroyCurrentView(view);
+        window.App.mainRegion.show(view);
+        
+    },
+    destroyCurrentView: function(view) {
+        if (!_.isUndefined(window.App.views.currentView)) {
+            window.App.views.currentView.destroy();
+        }
+        window.App.views.currentView = view;
+    }
+});
+
+module.exports = Controller;
+},{"./module":5,"backbone.marionette":64,"jquery":90,"underscore":92}],4:[function(require,module,exports){
+var $          = require('jquery'),
+	Backbone   = require('backbone');
+
+Backbone.$ = $;
+
+Model = Backbone.Model.extend({
+	defaults : {
+		
+	},
+	urlRoot: function(){
+		return window.App.apiURL + '/users';
+	}
+});
+
+module.exports = Model;
+},{"backbone":68,"jquery":90}],5:[function(require,module,exports){
+module.exports = {
+	Views: require('./views'),
+	Model: require('./model'),
+	Collection: require('./collection')
+}
+},{"./collection":2,"./model":4,"./views":7}],6:[function(require,module,exports){
+var $          = require('jquery'),
+	Backbone   = require('backbone'),
+	Controller = require('./controller');
+
+Backbone.$ = $;
+
+var Router = Backbone.Router.extend({
+	routes : {
+		'users'   : 'showUsers'
+	},
+	initialize : function(){
+		this.controller = new Controller();
+		console.log('Admin Router Initialized');
+	},
+	showUsers: function(){
+		if(!window.sessionStorage.token || !window.App.instance.get('user').get('isAdmin'))
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.showUsers();
+	}
+});
+
+module.exports = Router;
+},{"./controller":3,"backbone":68,"jquery":90}],7:[function(require,module,exports){
+module.exports = {
+	Index: require('./views/index'),
+	List: require('./views/list')
+};
+},{"./views/index":8,"./views/list":9}],8:[function(require,module,exports){
+var $          = require('jquery'),
+	Marionette = require('backbone.marionette'),
+	Backbone   = require('backbone'),
+    Template   = require('./templates/index.hbs');
+
+Index = Marionette.ItemView.extend({
+	id        : 'admin-view',
+	tagName   : 'div',
+	className : 'admin-view',
+	template  : Template,
+	events : {
+		'click #show_users' : 'showUsers'
+	},
+	initialize : function(){
+		console.log('admin view');
+	},
+	showUsers: function(){
+		Backbone.history.navigate('users', {trigger: true})
+	}
+});
+
+module.exports = Index;
+},{"./templates/index.hbs":10,"backbone":68,"backbone.marionette":64,"jquery":90}],9:[function(require,module,exports){
+var $          = require('jquery')
+	Marionette = require('backbone.marionette'),
+    Template   = require('./templates/user.hbs');
+
+var User = Marionette.ItemView.extend({
+	id        : 'users-view',
+	tagName   : 'div',
+	className : 'list_item',
+	template  : Template,
+	events : {
+		
+	},
+	initialize : function(){
+		
+	}
+});
+
+List = Marionette.CollectionView.extend({
+	tagname : 'div',
+	className: 'users_list',
+	childView : User,
+	initialize : function(){
+		console.log(this.collection.toJSON())
+	},
+	onShow: function(){
+		this.$el.append('<div id="addUsers"><h3>Add</h3></div>')
+	}
+	
+});
+
+module.exports = List;
+},{"./templates/user.hbs":11,"backbone.marionette":64,"jquery":90}],10:[function(require,module,exports){
+// hbsfy compiled Handlebars template
+var HandlebarsCompiler = require('hbsfy/runtime');
+module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"admin-container\">\n	<div id=\"show_users\" class=\"list-item\">\n		<p>Users</p>\n	</div>\n</div>";
+},"useData":true});
+
+},{"hbsfy/runtime":88}],11:[function(require,module,exports){
+// hbsfy compiled Handlebars template
+var HandlebarsCompiler = require('hbsfy/runtime');
+module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=helpers.helperMissing, alias2="function", alias3=container.escapeExpression;
+
+  return "<div class=\"user-container\">\n	<div class=\"user-item\">\n		<p>"
+    + alias3(((helper = (helper = helpers.firstname || (depth0 != null ? depth0.firstname : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"firstname","hash":{},"data":data}) : helper)))
+    + "&nbsp;"
+    + alias3(((helper = (helper = helpers.lastname || (depth0 != null ? depth0.lastname : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"lastname","hash":{},"data":data}) : helper)))
+    + "<p><br>\n		\n	</div>\n</div>";
+},"useData":true});
+
+},{"hbsfy/runtime":88}],12:[function(require,module,exports){
 var $          = require('jquery'),
 	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
 	LoginView  = require('../session/views/index'),
     HeaderView = require('../user/views/index'),
+    AdminView  = require('../admin/views/index'),
     Module     = require('./module');
 
 var Controller = Marionette.Controller.extend({
@@ -106,6 +287,12 @@ var Controller = Marionette.Controller.extend({
         var view = new Module.Views.Search();
         this.renderView(view);
     },
+    showAdminOptions: function(){
+        $('#page_title').html('Admin Options');
+        var view = new AdminView();
+
+        this.renderView(view)
+    },
     renderView: function(view) {
         this.destroyCurrentView(view);
         window.App.mainRegion.show(view);
@@ -120,7 +307,7 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"../session/views/index":16,"../user/views/index":47,"./module":4,"backbone.marionette":54,"jquery":80,"underscore":82}],3:[function(require,module,exports){
+},{"../admin/views/index":8,"../session/views/index":26,"../user/views/index":57,"./module":14,"backbone.marionette":64,"jquery":90,"underscore":92}],13:[function(require,module,exports){
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
 	User       = require('../user/module'),
@@ -146,7 +333,7 @@ Model = Backbone.Model.extend({
 });
 
 module.exports = Model;
-},{"../sites/module":20,"../steel_class/module":39,"../user/module":43,"backbone":58,"jquery":80}],4:[function(require,module,exports){
+},{"../sites/module":30,"../steel_class/module":49,"../user/module":53,"backbone":68,"jquery":90}],14:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	Model    = require('./model'),
@@ -158,7 +345,7 @@ module.exports = {
 	Model : Model,
 	Views : Views
 };
-},{"./model":3,"./view":6,"backbone":58,"jquery":80}],5:[function(require,module,exports){
+},{"./model":13,"./view":16,"backbone":68,"jquery":90}],15:[function(require,module,exports){
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
 	Controller = require('./controller');
@@ -169,7 +356,8 @@ var Router = Backbone.Router.extend({
 	routes : {
 		'home'   : 'navHome',
 		'add'    : 'addMaterials',
-		'search' : 'searchMaterials'
+		'search' : 'searchMaterials',
+		'admin'  : 'showAdminOptions'
 	},
 	initialize : function(){
 		this.controller = new Controller();
@@ -192,11 +380,17 @@ var Router = Backbone.Router.extend({
 			return Backbone.history.navigate('login', {trigger: true})
 		else
 			this.controller.searchMaterials();
+	},
+	showAdminOptions: function(){
+		if(!window.sessionStorage.token || !window.App.instance.get('user').get('isAdmin'))
+			return Backbone.history.navigate('login', {trigger: true})
+		else
+			this.controller.showAdminOptions();
 	}
 });
 
 module.exports = Router;
-},{"./controller":2,"backbone":58,"jquery":80}],6:[function(require,module,exports){
+},{"./controller":12,"backbone":68,"jquery":90}],16:[function(require,module,exports){
 var Views = {
 	Index  : require('./views/index'),
 	Add    : require('./views/add'),
@@ -204,7 +398,7 @@ var Views = {
 };
 
 module.exports = Views;
-},{"./views/add":7,"./views/index":8,"./views/search":9}],7:[function(require,module,exports){
+},{"./views/add":17,"./views/index":18,"./views/search":19}],17:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -228,7 +422,7 @@ Add = Marionette.ItemView.extend({
 });
 
 module.exports = Add;
-},{"./templates/add.hbs":10,"backbone":58,"backbone.marionette":54,"jquery":80}],8:[function(require,module,exports){
+},{"./templates/add.hbs":20,"backbone":68,"backbone.marionette":64,"jquery":90}],18:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -241,7 +435,8 @@ Index = Marionette.ItemView.extend({
 	template  : Template,
 	events : {
 		'click div#search' : 'searchMaterials',
-		'click div#add'    : 'addMaterials'
+		'click div#add'    : 'addMaterials',
+		'click #goToAdmin' : 'showAdmin'
 	},
 	initialize : function(){
 		if(window.sessionStorage.token)
@@ -252,11 +447,14 @@ Index = Marionette.ItemView.extend({
 	},
 	addMaterials : function(){
 		Backbone.history.navigate('add', {trigger : true})
+	},
+	showAdmin: function(){
+		Backbone.history.navigate('admin', {trigger : true})
 	}
 });
 
 module.exports = Index;
-},{"./templates/index.hbs":11,"backbone":58,"backbone.marionette":54,"jquery":80}],9:[function(require,module,exports){
+},{"./templates/index.hbs":21,"backbone":68,"backbone.marionette":64,"jquery":90}],19:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -280,28 +478,28 @@ Search = Marionette.ItemView.extend({
 });
 
 module.exports = Search;
-},{"./templates/search.hbs":12,"backbone":58,"backbone.marionette":54,"jquery":80}],10:[function(require,module,exports){
+},{"./templates/search.hbs":22,"backbone":68,"backbone.marionette":64,"jquery":90}],20:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"material_list-container\">\n	<div id=\"add_steel\" class=\"list-item\">\n		<p>Steel</p>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],11:[function(require,module,exports){
+},{"hbsfy/runtime":88}],21:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"home-container\">\n	<div id=\"search\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-search\" aria-hidden=\"true\"></span>\n		<p>Search</p>\n	</div>\n	<div id=\"add\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n		<p>Add</p>\n	</div>\n</div>";
+    return "<div class=\"home-container\">\n	<div id=\"search\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-search\" aria-hidden=\"true\"></span>\n		<p>Search</p>\n	</div>\n	<div id=\"add\" class=\"list-item\">\n		<span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n		<p>Add</p>\n	</div>\n<div id=\"goToAdmin\"><h3>Administrator</h3></div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],12:[function(require,module,exports){
+},{"hbsfy/runtime":88}],22:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"material_list-container\">\n	<div id=\"search_steel\" class=\"list-item\">\n		<p>Steel</p>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],13:[function(require,module,exports){
+},{"hbsfy/runtime":88}],23:[function(require,module,exports){
 var $          = require('jquery'),
 	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
@@ -331,7 +529,7 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"./model":14,"./views/index":16,"backbone.marionette":54,"jquery":80,"underscore":82}],14:[function(require,module,exports){
+},{"./model":24,"./views/index":26,"backbone.marionette":64,"jquery":90,"underscore":92}],24:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	Backbone.$ = $;
@@ -354,7 +552,7 @@ module.exports = Model;
 	
 
 
-},{"backbone":58,"jquery":80}],15:[function(require,module,exports){
+},{"backbone":68,"jquery":90}],25:[function(require,module,exports){
 var $ 		   = require('jquery'),
 	Backbone   = require('backbone'),
 	Controller = require('./controller');
@@ -375,7 +573,7 @@ Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{"./controller":13,"backbone":58,"jquery":80}],16:[function(require,module,exports){
+},{"./controller":23,"backbone":68,"jquery":90}],26:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -439,14 +637,14 @@ Index = Marionette.ItemView.extend({
 });
 
 module.exports = Index;
-},{"./templates/index.hbs":17,"backbone":58,"backbone.marionette":54,"jquery":80}],17:[function(require,module,exports){
+},{"./templates/index.hbs":27,"backbone":68,"backbone.marionette":64,"jquery":90}],27:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"login-container\">\n	<div id=\"logo\">\n		<img src=\"assets/img/logo.png\">\n	</div>\n	<div class=\"login-details\">\n		<input id=\"username\" placeholder=\" Username\" type=\"text\"/>\n		<span class=\"errors\"></span>\n		\n		<input id=\"password\" placeholder=\" Password\" type=\"password\"/>\n		<span class=\"errors\"></span>\n\n		<button id=\"submit_password\">Submit</button>\n\n		<span class=\"validate_response\"></span>\n		<div class=\"error\">\n			<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],18:[function(require,module,exports){
+},{"hbsfy/runtime":88}],28:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone')
 	Model = require('./model');
@@ -460,7 +658,7 @@ Collection = Backbone.Collection.extend({
 });
 
 module.exports = Collection;
-},{"./model":19,"backbone":58,"jquery":80}],19:[function(require,module,exports){
+},{"./model":29,"backbone":68,"jquery":90}],29:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	Backbone.$ = $;
@@ -479,7 +677,7 @@ Model = Backbone.Model.extend({
 });
 
 module.exports = Model;
-},{"backbone":58,"jquery":80}],20:[function(require,module,exports){
+},{"backbone":68,"jquery":90}],30:[function(require,module,exports){
 var Model      = require('./model'),
 	Collection = require('./collection');
 
@@ -487,7 +685,7 @@ module.exports = {
 	Model  : Model,
 	Collection  : Collection
 };
-},{"./collection":18,"./model":19}],21:[function(require,module,exports){
+},{"./collection":28,"./model":29}],31:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	moment = require('moment'),
@@ -501,12 +699,12 @@ Collection = Backbone.Collection.extend({
 		//add token to URL: ?token=' + window.App.data.token
 	},
 	comparator: function(item){
-		return item.get('date_added') == moment( item.get('date_added') ).unix();
+		return moment(item.get('date_col').toString(), 'DD-MM-YYYY').unix()*-1;
 	},
 });
 
 module.exports = Collection;
-},{"./model":23,"backbone":58,"jquery":80,"moment":81}],22:[function(require,module,exports){
+},{"./model":33,"backbone":68,"jquery":90,"moment":91}],32:[function(require,module,exports){
 var $             = require('jquery'),
 	_             = require('underscore'),
 	Marionette    = require('backbone.marionette'),
@@ -567,7 +765,7 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"./module":24,"backbone.marionette":54,"jquery":80,"underscore":82}],23:[function(require,module,exports){
+},{"./module":34,"backbone.marionette":64,"jquery":90,"underscore":92}],33:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	Backbone.$ = $;
@@ -611,7 +809,7 @@ Model = Backbone.Model.extend({
 });
 
 module.exports = Model;
-},{"backbone":58,"jquery":80}],24:[function(require,module,exports){
+},{"backbone":68,"jquery":90}],34:[function(require,module,exports){
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
 	Model      = require('./model'),
@@ -629,7 +827,7 @@ module.exports = {
 
 
 
-},{"./collection":21,"./model":23,"./view":26,"backbone":58,"jquery":80}],25:[function(require,module,exports){
+},{"./collection":31,"./model":33,"./view":36,"backbone":68,"jquery":90}],35:[function(require,module,exports){
 var $ 		   = require('jquery'),
 	Backbone   = require('backbone'),
 	Controller = require('./controller'),
@@ -681,7 +879,7 @@ Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{"./controller":22,"./module":24,"backbone":58,"jquery":80}],26:[function(require,module,exports){
+},{"./controller":32,"./module":34,"backbone":68,"jquery":90}],36:[function(require,module,exports){
 var Views = {
 	Add   : require('./views/add'),
 	Edit  : require('./views/edit'),
@@ -691,7 +889,7 @@ var Views = {
 };
 
 module.exports = Views;
-},{"./views/add":27,"./views/edit":28,"./views/item":29,"./views/list":30,"./views/order":31}],27:[function(require,module,exports){
+},{"./views/add":37,"./views/edit":38,"./views/item":39,"./views/list":40,"./views/order":41}],37:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -869,7 +1067,7 @@ Add = Marionette.ItemView.extend({
 });
 
 module.exports = Add;
-},{"../../sites/module":20,"../model":23,"./templates/add.hbs":32,"backbone":58,"backbone.marionette":54,"jquery":80,"jquery-ui":79}],28:[function(require,module,exports){
+},{"../../sites/module":30,"../model":33,"./templates/add.hbs":42,"backbone":68,"backbone.marionette":64,"jquery":90,"jquery-ui":89}],38:[function(require,module,exports){
 var $ = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone = require('backbone'),
@@ -1056,7 +1254,7 @@ Edit = Marionette.ItemView.extend({
 });
 
 module.exports = Edit;
-},{"../../steel_class/collection":37,"./templates/edit.hbs":33,"backbone":58,"backbone.marionette":54,"jquery":80,"jquery-ui":79,"underscore":82}],29:[function(require,module,exports){
+},{"../../steel_class/collection":47,"./templates/edit.hbs":43,"backbone":68,"backbone.marionette":64,"jquery":90,"jquery-ui":89,"underscore":92}],39:[function(require,module,exports){
 var $ = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone = require('backbone'),
@@ -1094,7 +1292,7 @@ Item = Marionette.ItemView.extend({
 });
 
 module.exports = Item;
-},{"./templates/item.hbs":35,"backbone":58,"backbone.marionette":54,"jquery":80}],30:[function(require,module,exports){
+},{"./templates/item.hbs":45,"backbone":68,"backbone.marionette":64,"jquery":90}],40:[function(require,module,exports){
 var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
     ItemView   = require('./item'),
@@ -1215,7 +1413,7 @@ var FilterView = Marionette.ItemView.extend({
 });
 
 module.exports = List;
-},{"../../steel_class/collection":37,"../../steel_class/model":38,"./item":29,"./templates/filter.hbs":34,"backbone.marionette":54,"jquery":80}],31:[function(require,module,exports){
+},{"../../steel_class/collection":47,"../../steel_class/model":48,"./item":39,"./templates/filter.hbs":44,"backbone.marionette":64,"jquery":90}],41:[function(require,module,exports){
 var $ = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone = require('backbone'),
@@ -1401,14 +1599,14 @@ Order = Marionette.ItemView.extend({
 });
 
 module.exports = Order;
-},{"../model":23,"./templates/order.hbs":36,"backbone":58,"backbone.marionette":54,"jquery":80,"jquery-ui":79,"moment":81}],32:[function(require,module,exports){
+},{"../model":33,"./templates/order.hbs":46,"backbone":68,"backbone.marionette":64,"jquery":90,"jquery-ui":89,"moment":91}],42:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"form-container\">\n	<form class=\"add_steel\">\n		<label for=\"\">Type</label>\n		<select id=\"sd\" class=\"steel_type selectmenu form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Section</label>\n		<select class=\"steel_section form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"\">Grade</label>\n		<select class=\"steel_grade form-control\">\n			<option value=\"\">Please select</option>\n		</select>\n\n		<label for=\"length\">Length</label>\n		<input class=\"form-control\" id=\"length\" name=\"length\" type=\"number\"></input>\n\n		<label for=\"length\">Quantity</label>\n		<input class=\"form-control\" id=\"quantity\" name=\"quantity\" type=\"number\"></input>\n\n		<div class=\"project_form\">\n			<label for=\"job_number\">Job No.</label><br>\n			<select class=\"form-control half_width\" id=\"job_number\" name=\"job_number\" type=\"number\">\n				<option value=\"\">Please select</option>\n			</select>\n			<input class=\"form-control half_width\" id=\"job_number2\" name=\"job_number\" type=\"number\"></input>\n			<div class=\"add_project\"><span class=\"icon glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span></div>\n\n			<label id=\"project_label\" for=\"project\">Project Name</label>\n			<input class=\"form-control\" id=\"project\" name=\"project\" type=\"text\" readonly></input>\n		</div>\n		\n\n\n		<label for=\"date_col\">Collection Date</label><br>\n		<input readonly=\"true\" id=\"date_col\" class=\"form-control half_width\" type=\"text\"></input>\n		</span>\n\n		<label for=\"commments\">Comments</label>\n		<textarea class=\"form-control\" id=\"comments\" name=\"comments\" type=\"text\"></textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Item Added!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Item has been added!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],33:[function(require,module,exports){
+},{"hbsfy/runtime":88}],43:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -1482,7 +1680,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + "</textarea>\n		<input class=\"confirm\" id=\"submit-form\" type=\"button\" value=\"Submit\"/>\n		<input class=\"cancel\" id=\"cancel-form\" type=\"button\" value=\"Cancel\"/>\n	</form>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],34:[function(require,module,exports){
+},{"hbsfy/runtime":88}],44:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -1518,7 +1716,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
     + "	</div>\n</div>	";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],35:[function(require,module,exports){
+},{"hbsfy/runtime":88}],45:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -1557,7 +1755,7 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
   return ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.quantity : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
-},{"hbsfy/runtime":78}],36:[function(require,module,exports){
+},{"hbsfy/runtime":88}],46:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -1578,7 +1776,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + "</div>\n		<button class=\"confirm_order\">Confirm</button>\n		<button class=\"cancel_order\">Cancel</button>\n	</div>\n	<div class=\"confirmation\">\n		<div class=\"confirm_header\">\n			<h4>Order Confirmed!</h4>\n		</div>\n		<div class=\"text\">\n			<p>Your order has been confirmed!</p>\n		</div>\n		<div class=\"actions\">\n			<button id=\"view\">View</button>\n			<button id=\"home\">Home</button>\n		</div>\n	</div>\n</div>\n<div class=\"error\">\n	<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n	<div class=\"text\">\n		\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],37:[function(require,module,exports){
+},{"hbsfy/runtime":88}],47:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	Model = require('./model');
@@ -1597,7 +1795,7 @@ Collection = Backbone.Collection.extend({
 });
 
 module.exports = Collection;
-},{"./model":38,"backbone":58,"jquery":80}],38:[function(require,module,exports){
+},{"./model":48,"backbone":68,"jquery":90}],48:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone');
 	
@@ -1621,7 +1819,7 @@ Model = Backbone.Model.extend({
 });
 
 module.exports = Model;
-},{"backbone":58,"jquery":80}],39:[function(require,module,exports){
+},{"backbone":68,"jquery":90}],49:[function(require,module,exports){
 var $           = require('jquery'),
 	Backbone    = require('backbone'),
 	Collection  = require('./collection'),
@@ -1631,9 +1829,10 @@ module.exports = {
 	Model      : Model,
 	Collection : Collection
 };
-},{"./collection":37,"./model":38,"backbone":58,"jquery":80}],40:[function(require,module,exports){
+},{"./collection":47,"./model":48,"backbone":68,"jquery":90}],50:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
+	moment = require('moment'),
 	Model    = require('../steel/model');
 	Backbone.$ = $;
 
@@ -1641,6 +1840,9 @@ Incoming = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
 		return window.App.apiURL + '/steel_outs/users?token=' + window.sessionStorage.token;
+	},
+	comparator: function(item){
+		return moment(item.get('date_req').toString(), 'DD-MM-YYYY').unix()*-1;
 	}
 });
 
@@ -1648,6 +1850,9 @@ Outgoing = Backbone.Collection.extend({
 	model : Model,
 	url : function(){
 		return window.App.apiURL + '/steel_items/users?token=' + window.sessionStorage.token;
+	},
+	comparator: function(item){
+		return moment(item.get('date_col').toString(), 'DD-MM-YYYY').unix()*-1;
 	}
 });
 
@@ -1655,7 +1860,7 @@ module.exports = {
 	Incoming : Incoming,
 	Outgoing : Outgoing
 };
-},{"../steel/model":23,"backbone":58,"jquery":80}],41:[function(require,module,exports){
+},{"../steel/model":33,"backbone":68,"jquery":90,"moment":91}],51:[function(require,module,exports){
 var $          = require('jquery'),
 	_          = require('underscore'),
 	Marionette = require('backbone.marionette'),
@@ -1701,7 +1906,7 @@ var Controller = Marionette.Controller.extend({
 });
 
 module.exports = Controller;
-},{"./module":43,"backbone.marionette":54,"jquery":80,"underscore":82}],42:[function(require,module,exports){
+},{"./module":53,"backbone.marionette":64,"jquery":90,"underscore":92}],52:[function(require,module,exports){
 var $          = require('jquery'),
 	Backbone   = require('backbone'),
 	Collection = require('./collection');
@@ -1751,7 +1956,7 @@ module.exports = Model;
 	
 
 
-},{"./collection":40,"backbone":58,"jquery":80}],43:[function(require,module,exports){
+},{"./collection":50,"backbone":68,"jquery":90}],53:[function(require,module,exports){
 var $        = require('jquery'),
 	Backbone = require('backbone'),
 	Model    = require('./model'),
@@ -1761,7 +1966,7 @@ module.exports = {
 	Model  : Model,
 	Views  : Views
 };
-},{"./model":42,"./view":45,"backbone":58,"jquery":80}],44:[function(require,module,exports){
+},{"./model":52,"./view":55,"backbone":68,"jquery":90}],54:[function(require,module,exports){
 var $ 		   = require('jquery'),
 	Backbone   = require('backbone'),
 	Controller = require('./controller');
@@ -1798,7 +2003,7 @@ Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{"./controller":41,"backbone":58,"jquery":80}],45:[function(require,module,exports){
+},{"./controller":51,"backbone":68,"jquery":90}],55:[function(require,module,exports){
 var Index        = require('./views/index'),
 	Transactions = require('./views/transactions'),
 	Outgoing     = require('./views/outgoing'),
@@ -1810,7 +2015,7 @@ module.exports = {
 	Outgoing     : Outgoing,
 	Incoming     : Incoming
 };
-},{"./views/incoming":46,"./views/index":47,"./views/outgoing":48,"./views/transactions":53}],46:[function(require,module,exports){
+},{"./views/incoming":56,"./views/index":57,"./views/outgoing":58,"./views/transactions":63}],56:[function(require,module,exports){
 var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -1831,9 +2036,11 @@ List = Marionette.CollectionView.extend({
 	className  : 'orders-view',
 	childView  : Item,
 	initialize : function(){
-		
+		var self = this;
 		this.collection.fetch({
 			data : $.param({ordered_by : window.App.instance.get('user').get('username')})
+		}).done(function(){
+			console.log(self.collection.toJSON())
 		});
 	}
 });
@@ -1841,7 +2048,7 @@ List = Marionette.CollectionView.extend({
 module.exports = List;
 
 
-},{"./templates/incoming.hbs":49,"backbone":58,"backbone.marionette":54,"jquery":80}],47:[function(require,module,exports){
+},{"./templates/incoming.hbs":59,"backbone":68,"backbone.marionette":64,"jquery":90}],57:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -1894,7 +2101,7 @@ Index = Marionette.ItemView.extend({
 });
 
 module.exports = Index;
-},{"../module":43,"./templates/index.hbs":50,"backbone":58,"backbone.marionette":54,"jquery":80}],48:[function(require,module,exports){
+},{"../module":53,"./templates/index.hbs":60,"backbone":68,"backbone.marionette":64,"jquery":90}],58:[function(require,module,exports){
 var $          = require('jquery')
 	Marionette = require('backbone.marionette'),
 	Backbone   = require('backbone'),
@@ -1946,15 +2153,17 @@ List = Marionette.CollectionView.extend({
 	childView  : Item,
 	className  : 'posts-view',
 	initialize : function(){
-		
+		var self = this;
 		this.collection.fetch({
 			data : $.param({added_by : window.App.instance.get('user').get('username')})
+		}).done(function(){
+			console.log(self.collection.toJSON())
 		});
 	}
 });
 
 module.exports = List;
-},{"./templates/outgoing.hbs":51,"backbone":58,"backbone.marionette":54,"jquery":80}],49:[function(require,module,exports){
+},{"./templates/outgoing.hbs":61,"backbone":68,"backbone.marionette":64,"jquery":90}],59:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -1975,14 +2184,14 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + "<p></div>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],50:[function(require,module,exports){
+},{"hbsfy/runtime":88}],60:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"header-container\">\n	<button id=\"menu\"><span class=\"icon glyphicon glyphicon-user\" aria-hidden=\"true\"></span></button>\n	<button id=\"home\"><span class=\"icon glyphicon glyphicon-home\" aria-hidden=\"true\"></span></button>\n	<div id=\"page_title\">Options</div>\n	<div class=\"mc\" id=\"menu-container\">\n		<ul>\n			<li class=\"menu-option\" id=\"account\">My Account\n				<span class=\"icon glyphicon glyphicon-folder-open\" aria-hidden=\"true\">\n			</li>\n			<li class=\"menu-option\" id=\"logout\">Log Out\n			<span class=\"icon glyphicon glyphicon-log-out\" aria-hidden=\"true\">\n			</li>\n		</ul>\n	</div>\n</div>	";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],51:[function(require,module,exports){
+},{"hbsfy/runtime":88}],61:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(container,depth0,helpers,partials,data) {
@@ -2005,14 +2214,14 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
   return ((stack1 = helpers["if"].call(depth0,(depth0 != null ? depth0.available : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
-},{"hbsfy/runtime":78}],52:[function(require,module,exports){
+},{"hbsfy/runtime":88}],62:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"account-container\">\n	<div id=\"added_items\" class=\"list-item\">\n		<p>Added Items</p>\n	</div>\n	<div id=\"ordered_items\" class=\"list-item\">\n		<p>Ordered Items</p>\n	</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":78}],53:[function(require,module,exports){
+},{"hbsfy/runtime":88}],63:[function(require,module,exports){
 var $          = require('jquery'),
 	Marionette = require('backbone.marionette'),
     Template   = require('./templates/transactions.hbs');
@@ -2038,7 +2247,7 @@ Transactions = Marionette.ItemView.extend({
 });
 
 module.exports = Transactions;
-},{"./templates/transactions.hbs":52,"backbone.marionette":54,"jquery":80}],54:[function(require,module,exports){
+},{"./templates/transactions.hbs":62,"backbone.marionette":64,"jquery":90}],64:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
 // v2.4.2
@@ -5477,7 +5686,7 @@ module.exports = Transactions;
   return Marionette;
 }));
 
-},{"backbone":57,"backbone.babysitter":55,"backbone.wreqr":56,"underscore":82}],55:[function(require,module,exports){
+},{"backbone":67,"backbone.babysitter":65,"backbone.wreqr":66,"underscore":92}],65:[function(require,module,exports){
 // Backbone.BabySitter
 // -------------------
 // v0.1.8
@@ -5669,7 +5878,7 @@ module.exports = Transactions;
 
 }));
 
-},{"backbone":57,"underscore":82}],56:[function(require,module,exports){
+},{"backbone":67,"underscore":92}],66:[function(require,module,exports){
 // Backbone.Wreqr (Backbone.Marionette)
 // ----------------------------------
 // v1.3.3
@@ -6106,7 +6315,7 @@ module.exports = Transactions;
 
 }));
 
-},{"backbone":57,"underscore":82}],57:[function(require,module,exports){
+},{"backbone":67,"underscore":92}],67:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.1
 
@@ -7983,7 +8192,7 @@ module.exports = Transactions;
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":80,"underscore":82}],58:[function(require,module,exports){
+},{"jquery":90,"underscore":92}],68:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -9881,7 +10090,7 @@ module.exports = Transactions;
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":80,"underscore":82}],59:[function(require,module,exports){
+},{"jquery":90,"underscore":92}],69:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -9950,7 +10159,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars/base":60,"./handlebars/exception":63,"./handlebars/no-conflict":73,"./handlebars/runtime":74,"./handlebars/safe-string":75,"./handlebars/utils":76}],60:[function(require,module,exports){
+},{"./handlebars/base":70,"./handlebars/exception":73,"./handlebars/no-conflict":83,"./handlebars/runtime":84,"./handlebars/safe-string":85,"./handlebars/utils":86}],70:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10056,7 +10265,7 @@ exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
 
 
-},{"./decorators":61,"./exception":63,"./helpers":64,"./logger":72,"./utils":76}],61:[function(require,module,exports){
+},{"./decorators":71,"./exception":73,"./helpers":74,"./logger":82,"./utils":86}],71:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10074,7 +10283,7 @@ function registerDefaultDecorators(instance) {
 }
 
 
-},{"./decorators/inline":62}],62:[function(require,module,exports){
+},{"./decorators/inline":72}],72:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10105,7 +10314,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":76}],63:[function(require,module,exports){
+},{"../utils":86}],73:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10147,7 +10356,7 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 
 
-},{}],64:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10195,7 +10404,7 @@ function registerDefaultHelpers(instance) {
 }
 
 
-},{"./helpers/block-helper-missing":65,"./helpers/each":66,"./helpers/helper-missing":67,"./helpers/if":68,"./helpers/log":69,"./helpers/lookup":70,"./helpers/with":71}],65:[function(require,module,exports){
+},{"./helpers/block-helper-missing":75,"./helpers/each":76,"./helpers/helper-missing":77,"./helpers/if":78,"./helpers/log":79,"./helpers/lookup":80,"./helpers/with":81}],75:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10236,7 +10445,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":76}],66:[function(require,module,exports){
+},{"../utils":86}],76:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10336,7 +10545,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":63,"../utils":76}],67:[function(require,module,exports){
+},{"../exception":73,"../utils":86}],77:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10363,7 +10572,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":63}],68:[function(require,module,exports){
+},{"../exception":73}],78:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10394,7 +10603,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":76}],69:[function(require,module,exports){
+},{"../utils":86}],79:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10422,7 +10631,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],70:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10436,7 +10645,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],71:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10471,7 +10680,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":76}],72:[function(require,module,exports){
+},{"../utils":86}],82:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10517,7 +10726,7 @@ exports['default'] = logger;
 module.exports = exports['default'];
 
 
-},{}],73:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 (function (global){
 /* global window */
 'use strict';
@@ -10540,7 +10749,7 @@ module.exports = exports['default'];
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],74:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10833,7 +11042,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 }
 
 
-},{"./base":60,"./exception":63,"./utils":76}],75:[function(require,module,exports){
+},{"./base":70,"./exception":73,"./utils":86}],85:[function(require,module,exports){
 // Build out our basic SafeString type
 'use strict';
 
@@ -10850,7 +11059,7 @@ exports['default'] = SafeString;
 module.exports = exports['default'];
 
 
-},{}],76:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10976,15 +11185,15 @@ function appendContextPath(contextPath, id) {
 }
 
 
-},{}],77:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime')['default'];
 
-},{"./dist/cjs/handlebars.runtime":59}],78:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":69}],88:[function(require,module,exports){
 module.exports = require("handlebars/runtime")["default"];
 
-},{"handlebars/runtime":77}],79:[function(require,module,exports){
+},{"handlebars/runtime":87}],89:[function(require,module,exports){
 var jQuery = require('jquery');
 
 /*! jQuery UI - v1.10.3 - 2013-05-03
@@ -25991,7 +26200,7 @@ $.widget( "ui.tooltip", {
 
 }( jQuery ) );
 
-},{"jquery":80}],80:[function(require,module,exports){
+},{"jquery":90}],90:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -35203,7 +35412,7 @@ return jQuery;
 
 }));
 
-},{}],81:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -38399,7 +38608,7 @@ return jQuery;
     return _moment;
 
 }));
-},{}],82:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

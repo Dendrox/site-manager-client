@@ -18,9 +18,11 @@ List = Marionette.CollectionView.extend({
 	className  : 'orders-view',
 	childView  : Item,
 	initialize : function(){
-		
+		var self = this;
 		this.collection.fetch({
 			data : $.param({ordered_by : window.App.instance.get('user').get('username')})
+		}).done(function(){
+			console.log(self.collection.toJSON())
 		});
 	}
 });

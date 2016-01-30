@@ -15,7 +15,8 @@ var Application   = require('./modules/application/module'),
 	AppRouter     = require('./modules/application/router'),
 	SteelRouter   = require('./modules/steel/router'),
 	UserRouter    = require('./modules/user/router'),
-	SessionRouter = require('./modules/session/router');
+	SessionRouter = require('./modules/session/router'),
+	AdminRouter   = require('./modules/admin/router');
 
 // Setup Application
 App.views    = {};
@@ -45,6 +46,7 @@ App.on('start', function() {
 	App.router.steel    = new SteelRouter();
 	App.router.user     = new UserRouter();
 	App.router.sesssion = new SessionRouter();
+	App.router.admin    = new AdminRouter();
 
 	// Note: Needs to be removed
 	$.ajaxSetup({
