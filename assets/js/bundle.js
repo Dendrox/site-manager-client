@@ -721,8 +721,8 @@ Index = Marionette.ItemView.extend({
 	},
 	authenticateUser : function(){
 		var data = {
-			username : 'rody.kirwan@gmail.com',//$('#username').val(),
-			password : 'site1'//$('#password').val()
+			username : $('#username').val(),//'rody.kirwan@gmail.com',//
+			password : $('#password').val() //'site1'//
 		};
 		
 		var self = this;
@@ -763,7 +763,7 @@ module.exports = Index;
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"login-container\">\n	<div id=\"logo\">\n		<img src=\"assets/img/logo.png\">\n	</div>\n	<div class=\"login-details\">\n		<input id=\"username\" placeholder=\" Username\" type=\"text\"/>\n		<span class=\"errors\"></span>\n		\n		<input id=\"password\" placeholder=\" Password\" type=\"password\"/>\n		<span class=\"errors\"></span>\n\n		<button id=\"submit_password\">Submit</button>\n\n		<span class=\"validate_response\"></span>\n		<div class=\"error\">\n			<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n		</div>\n	</div>\n</div>";
+    return "<div class=\"login-container\">\n	<div id=\"logo\">\n		<img src=\"assets/img/logo.png\">\n	</div>\n	<div class=\"login-details\">\n		<input id=\"username\" placeholder=\" Username\" type=\"email\"/>\n		<span class=\"errors\"></span>\n		\n		<input id=\"password\" placeholder=\" Password\" type=\"password\"/>\n		<span class=\"errors\"></span>\n\n		<button id=\"submit_password\">Submit</button>\n\n		<span class=\"validate_response\"></span>\n		<div class=\"error\">\n			<span class=\"glyphicon glyphicon-remove-circle icon\" aria-hidden=\"true\"></span>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":90}],30:[function(require,module,exports){
@@ -1647,7 +1647,7 @@ Order = Marionette.ItemView.extend({
 					var new_quantity = self.model.get('quantity') - quantity_ordered;
 
 					var options = {
-						extension    : 'order-steel',
+						extension    : 'create_order',
 						ordered_by   : window.App.instance.get('user').get('username'),
 						date_ordered : moment().format("DD-MM-YYYY HH:MM").toString(),
 						quantity     : quantity_ordered,
@@ -1684,26 +1684,27 @@ Order = Marionette.ItemView.extend({
 	confirmOrder : function(quantity_ordered, new_quantity, model, options){
 		var _this = this;
 
+
 		this.$el.find('.steel_order').empty();
 		this.model.save({
 			//'available'   : false, 
-			'extension'   : 'update-steel',
+			'extension'   : 'update-steel',// Merge order options with model and replace quantity
 			'quantity'     : new_quantity
 		}).done(function(response){
-
-			// Merge order options with model and replace quantity
-			var order_details = _.extend(_.pick(model.attributes, 'type', 'section', 'length', 'grade', 'added_by', 'date_added'), options);
-			
-
-			var order = new SteelItem(order_details);
-
-			order.save().done(function(response){
-				console.log(response);
-			}).fail(function(err){
-				console.log(err);
-			})
-			
 			_this.$el.find($('.confirmation')).show();
+		});
+
+		var order_details = _.extend(_.pick(model.attributes, 'type', 'section', 'length', 'grade', 'added_by', 'date_added'), options);
+			
+
+		var order = new SteelItem(order_details);
+
+		console.log(order);
+
+		order.save().done(function(response){
+			console.log('res',response);
+		}).fail(function(err){
+			console.log(err);
 		});
 	},
 	cancelOrder : function(){
@@ -2279,7 +2280,7 @@ List = Marionette.CollectionView.extend({
 		this.collection.fetch({
 			data : $.param({added_by : window.App.instance.get('user').get('username')})
 		}).done(function(){
-			console.log(self.collection.toJSON())
+			
 		});
 	}
 });

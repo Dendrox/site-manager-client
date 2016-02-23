@@ -23,8 +23,8 @@ Index = Marionette.ItemView.extend({
 	},
 	authenticateUser : function(){
 		var data = {
-			username : 'rody.kirwan@gmail.com',//$('#username').val(),
-			password : 'site1'//$('#password').val()
+			username : $('#username').val(),//'rody.kirwan@gmail.com',//
+			password : $('#password').val() //'site1'//
 		};
 		
 		var self = this;

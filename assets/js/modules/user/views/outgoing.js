@@ -53,7 +53,7 @@ List = Marionette.CollectionView.extend({
 		this.collection.fetch({
 			data : $.param({added_by : window.App.instance.get('user').get('username')})
 		}).done(function(){
-			console.log(self.collection.toJSON())
+			
 		});
 	}
 });
